@@ -5,8 +5,19 @@ import os
 
 import config
 
+config.IMAGES_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4/data/images/'
+config.TELEGRAM_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4//utils/telegram/'
 
-def add_order_in_process(row):
+
+def get_message_id_by_date(date, filepath):
+    existing_data_df = pd.read_csv(filepath, encoding='utf-8-sig')
+    matching_row = existing_data_df[existing_data_df['Дата'] == date]
+    if matching_row.empty:
+        return None
+    return matching_row['message_id'].iloc[0]
+
+
+def add_order_in_process(row, message_id):
 
     filepath = config.TELEGRAM_DIR + 'order_in_process_data.csv'
     # Загрузка существующих данных
@@ -19,6 +30,7 @@ def add_order_in_process(row):
 
     # Добавление новой строки
     new_data_df = pd.DataFrame([row], columns=existing_data_df.columns)
+    new_data_df['message_id'] = message_id  # Добавляем ID сообщения в новую строку
     combined_data = pd.concat([existing_data_df, new_data_df])
 
     # Сохранение в CSV
@@ -65,18 +77,18 @@ def create_message(row, balance=2500, risk=0.01):
     return text_message, message_data
 
 
-def send_message_in_telegram(new_rows):
+def send_message_in_telegram():
 
     # '''__________________________________________________________________'''
-    # folder = os.path.join(os.path.dirname(
-    #     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'data')
-    # filename = 'data.csv'
-    # filepath = os.path.join(folder, filename)
-    #
-    #
-    # print('test')
-    # # Загрузка данных
-    # new_rows = pd.read_csv(filepath, encoding='utf-8-sig')
+    folder = os.path.join(os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'data')
+    filename = 'data — копия.csv'
+    filepath = os.path.join(folder, filename)
+
+
+    print('test')
+    # Загрузка данных
+    new_rows = pd.read_csv(filepath, encoding='utf-8-sig')
     # '''__________________________________________________________________'''
 
     # Токен бота
@@ -102,28 +114,42 @@ def send_message_in_telegram(new_rows):
         # Отправка POST-запроса
         response = requests.post(url, data=payload)
 
+
+
+        # Проверка успешности запроса
+        if response.status_code == 200:
+            print(f"Сообщение для {row['ticker']} отправлено!")
+            # Добавляем информацию о позиции в файл order_in_process_data.csv
+            # add_order_in_process((message_data))
+            # Получаем ID отправленного сообщения
+            message_id = response.json().get('result', {}).get('message_id')
+
+            # Добавляем строку с ID сообщения в файл
+            add_order_in_process(message_data, message_id)
+            # Отправляем изображение
+
+        else:
+            print(f"Ошибка отправки сообщения для {row['ticker']}: {response.content}")
+
         # Отправка изображения
         image_path = f"{config.IMAGES_DIR}{row['ticker']}-{row['Дата']}.png"
         with open(image_path, 'rb') as image:
             payload_image = {
                 "chat_id": chat_id,
                 "caption": f"#{row['ticker']}",
-                "parse_mode": "Markdown"
+                "parse_mode": "Markdown",
+                "reply_to_message_id": message_id
             }
             files = {'photo': image}
             url_image = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
             response_image = requests.post(url_image, data=payload_image,
                                            files=files)
-
-        # Проверка успешности запроса
-        if response.status_code == 200 and response_image.status_code == 200:
-            print(f"Сообщение для {row['ticker']} отправлено!")
-            # Добавляем информацию о позиции в файл order_in_process_data.csv
-            add_order_in_process((message_data))
+            # Проверка успешности запроса
+        if response_image.status_code == 200:
+            print(f"Изображение для {row['ticker']} отправлено!")
         else:
-            print(f"Ошибка отправки сообщения для {row['ticker']}: {response.content}")
+            print(f"Ошибка отправки изображения для {row['ticker']}: {response.content}")
 
 
-
-# if __name__ == '__main__':
-#     send_message_in_telegram()
+if __name__ == '__main__':
+    send_message_in_telegram()
