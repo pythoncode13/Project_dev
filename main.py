@@ -39,9 +39,10 @@ def start():
     else:
         tickers = config.tickers
         timeframes = config.timeframes
-        s_date = config.s_date
-        u_date = config.u_date
-
+        # s_date = config.s_date
+        # u_date = config.u_date
+        s_date = "2023-01-20 00:00:00"
+        u_date = "2023-09-29 00:00:00"
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
                              debug=False,

@@ -108,7 +108,7 @@ class MultyWorker:
         timeframe_intervals,
         s_date, u_date,
         images=False,
-        debug=True,
+        debug=False,
         show_progress_bar=False,  # Показать прогресс бар
     ):
         self.tickers = tickers
@@ -161,28 +161,28 @@ class MultyWorker:
 
         # """Обрабатываем полученные файлы."""
         # Соединяем эксель файлы
-        combine_excel_files()
+        # combine_excel_files()
         # Выбираем валидные сетапы
         # trades_to_make = validation_trade_orders()
 
-        # Загрузка данных excel
-        trades_to_make = pd.read_excel(
-            config.RESULTS_DIR + '__final_output_new.xlsx'
-        )
-
-        # if new_df.empty:
-        #     return None
-
-        if trades_to_make is not None:
-            print(trades_to_make)
-            # Добавляем уникальные строки в базу
-            new_rows = add_position_to_data(trades_to_make)
-            # Если среди добавленных строк есть новые,
-            # тогда отправляем в Телеграм
-            if not new_rows.empty:
-                TelegramMessage.send_message_in_telegram(new_rows)
-        # Запускаем функцию проверки состояния открытых позиций
-        position_monitoring()
+        # # Загрузка данных excel
+        # trades_to_make = pd.read_excel(
+        #     config.RESULTS_DIR + '__final_output_new.xlsx'
+        # )
+        #
+        # # if new_df.empty:
+        # #     return None
+        #
+        # if trades_to_make is not None:
+        #     print(trades_to_make)
+        #     # Добавляем уникальные строки в базу
+        #     new_rows = add_position_to_data(trades_to_make)
+        #     # Если среди добавленных строк есть новые,
+        #     # тогда отправляем в Телеграм
+        #     if not new_rows.empty:
+        #         TelegramMessage.send_message_in_telegram(new_rows)
+        # # Запускаем функцию проверки состояния открытых позиций
+        # position_monitoring()
 
     def progress_indicator(self, _):
         with self.lock:
