@@ -102,8 +102,21 @@ def send_message_in_telegram(new_rows):
         # Отправка POST-запроса
         response = requests.post(url, data=payload)
 
+        # Отправка изображения
+        image_path = f"{config.IMAGES_DIR}{row['ticker']}-{row['Дата']}.png"
+        with open(image_path, 'rb') as image:
+            payload_image = {
+                "chat_id": chat_id,
+                "caption": f"#{row['ticker']}",
+                "parse_mode": "Markdown"
+            }
+            files = {'photo': image}
+            url_image = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+            response_image = requests.post(url_image, data=payload_image,
+                                           files=files)
+
         # Проверка успешности запроса
-        if response.status_code == 200:
+        if response.status_code == 200 and response_image.status_code == 200:
             print(f"Сообщение для {row['ticker']} отправлено!")
             # Добавляем информацию о позиции в файл order_in_process_data.csv
             add_order_in_process((message_data))

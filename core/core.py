@@ -199,10 +199,10 @@ class MultyWorker:
         # Выбираем валидные сетапы
         # trades_to_make = validation_trade_orders()
 
-        results_folder = config.RESULTS_DIR
-        filename_input = results_folder + '__final_output_new.xlsx'
-        # Загрузка новых данных
-        trades_to_make = pd.read_excel(filename_input)
+        # Загрузка данных excel
+        trades_to_make = pd.read_excel(
+            config.RESULTS_DIR + '__final_output_new.xlsx'
+        )
 
         # if new_df.empty:
         #     return None
@@ -211,7 +211,8 @@ class MultyWorker:
             print(trades_to_make)
             # Добавляем уникальные строки в базу
             new_rows = add_position_to_data(trades_to_make)
-            # Если среди добавленных строк есь новые, тогда отправляем в Телеграм
+            # Если среди добавленных строк есть новые,
+            # тогда отправляем в Телеграм
             if not new_rows.empty:
                 send_message_in_telegram(new_rows)
         # Запускаем функцию проверки состояния открытых позиций

@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 DEV = False
 
 # Включаем(True)/Выключаем(False) планировщик
-ENABLE_SCHEDULER = True
+ENABLE_SCHEDULER = False
 
 
 def start():
