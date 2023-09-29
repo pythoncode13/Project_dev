@@ -2,6 +2,7 @@ from core.point_combinations.treand_models.trend_model import TrendModel
 from core.point_combinations.up_trend_combinations import UpTrendCombinations
 from core.model_utilities.line import Line
 from core.model_utilities.point import Point
+from core.model_utilities.distance import Distance
 from core.point_combinations.treand_models.upexpmodel import UpExpModel
 
 
@@ -104,8 +105,8 @@ class UpTrendModel(TrendModel):
             # Сила модели
             if (int(t3[0]) - int(t1[0])) < (int(t1[0]) - int(CP[0])):
                 continue
-            dist_CP_t1_n = Line.calculate_distance(CP_n, t1_n)
-            dist_t1_t3_n = Line.calculate_distance(t1_n, t3_n)
+            dist_CP_t1_n = Distance.calculate_distance(CP_n, t1_n)
+            dist_t1_t3_n = Distance.calculate_distance(t1_n, t3_n)
             # if dist_CP_t1_n > dist_t1_t3_n:
             #     continue
             # т4 в два раза выше т2

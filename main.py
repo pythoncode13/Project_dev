@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 DEV = False
 
 # Включаем(True)/Выключаем(False) планировщик
-ENABLE_SCHEDULER = False
+ENABLE_SCHEDULER = True
 
 
 def start():
@@ -21,17 +21,17 @@ def start():
 
     if DEV:
         # tickers = [
-        #     'BTCUSDT'
+        #     'WLDUSDT'
         # ]
         tickers = config.tickers
         timeframes = ['30MINUTE']
 
         s_date = "2023-09-20 00:00:00"
-        u_date = "2023-09-25 10:00:00"
+        u_date = "2023-09-29 10:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=True,
-                             debug=True,
+                             debug=False,
                              show_progress_bar=False
                              )
         worker.work()

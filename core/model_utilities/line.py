@@ -19,7 +19,6 @@ class Line:
 
     @staticmethod
     def calculate(point1, point2):
-
         """Находим линию между двумя точками"""
 
         point1 = (float(point1[0]), float(point1[1]))
@@ -45,7 +44,6 @@ class Line:
 
     @staticmethod
     def calculate_1(point1, point2, right_edge_index):
-
         """Находим линию между двумя точками"""
 
         # Находим коэффициенты уравнения прямой, проходящей через две точки
@@ -72,7 +70,6 @@ class Line:
 
     @staticmethod
     def calculate_fan(point1, point2, right_limit_line):
-
         """Находим линию между двумя точками"""
 
         # Находим коэффициенты уравнения прямой, проходящей через две точки
@@ -200,28 +197,6 @@ class Line:
                             np.argmax(high[intersects])]
 
         return (rightmost_index_t2up1, df.loc[rightmost_index_t2up1, 'high'])
-
-    # @staticmethod
-    # def correction_LC_t2up1(df, t1, t2, t4):
-    #     # Получаем все бары между t1[0]+1 и t2[0]
-    #     high = df.loc[t1[0] + 1:t2[0], 'high']
-    #
-    #     # Сортируем индексы по возрастанию "high"
-    #     sorted_high_indices = high.sort_values().index
-    #
-    #     for high_index in sorted_high_indices:
-    #         # Построим линию через эту точку и t4
-    #         LC = Line.calculate((high_index, high[high_index]), t4)
-    #
-    #         # Вычисляем, какие бары пересекают линию
-    #         intersects = high > (LC.slope * high.index + LC.intercept)
-    #
-    #         # Если нет пересечений, возвращаем эту точку
-    #         if not intersects.any():
-    #             return (high_index, high[high_index])
-    #
-    #     # Если не найдено подходящей точки, возвращаем исходную t2
-    #     return t2
 
     @staticmethod
     def correction_LT_HP(df, t3up, t5up, slope, intercept):
@@ -408,6 +383,8 @@ class Line:
 
     @staticmethod
     def cos_sim_down(slope1, slope2):
+        """Вычисляем косинусное сходство,
+                для определения "параллельности линий."""
         percentage_parallel = round(
             100 * (1 - abs(slope1 - slope2) / max(abs(slope1), abs(slope2))),
             2)
@@ -426,7 +403,7 @@ class Line:
 
     @staticmethod
     def calculate_angle(point1, point2, point3):
-
+        """Вычисляет угол в градусах между тремя точками."""
         point1 = (float(point1[0]), float(point1[1]))
         point2 = (float(point2[0]), float(point2[1]))
         point3 = (float(point3[0]), float(point3[1]))
@@ -452,10 +429,3 @@ class Line:
         theta_deg = np.round(theta_deg, 1)
 
         return theta_deg
-
-    @staticmethod
-    def calculate_distance(point1: np.array, point2: np.array) -> float:
-        """
-        Вычисляет евклидово расстояние между двумя точками.
-        """
-        return np.round(np.sqrt(np.sum((point1 - point2) ** 2)), 5)

@@ -16,7 +16,7 @@ class PriceLevelChecker:
         not_activated_models = []
 
         for model in self.candidates:
-            dist_cp_t4_x2 = Distance.calculate_x2(model.CP, model.t4)
+            dist_cp_t4_x2 = Distance.calculate_x(model.CP, model.t4, 1)
             upper_limit = min(int(dist_cp_t4_x2), len(model.df))
 
             is_activated, activation_method, variable = self.check_activation(

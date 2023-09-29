@@ -1,7 +1,9 @@
 from core.point_combinations.treand_models.up_model_property import UpModelProperty
+from core.point_combinations.treand_models.up_model_property import ModelPlot
 
 
 class UpExpModel:
+
     """Класс содержит модели расширения."""
     def __init__(self, df, t1, t2, t3, t4, CP, LT, LC, t2_1, parallel, activation_method=None, activation_variable=None):
         self.df = df
@@ -18,3 +20,7 @@ class UpExpModel:
         self.activation_method = activation_method
         self.activation_variable = activation_variable
         self.properties = UpModelProperty(df, t1, t2, t3, t4, CP, LT, LC)
+        self.plot = None  # Сначала создаем пустой plot
+
+    def initialize_plot(self, start_index):
+        self.plot = ModelPlot(self, start_index)

@@ -6,6 +6,7 @@ from itertools import combinations
 
 from core.model_utilities.line import Line
 from core.model_utilities.point import Point
+from core.model_utilities.distance import Distance
 
 
 class FanLine:
@@ -305,7 +306,7 @@ class FanLine:
         height_ratio_t1_t2_to_t2_t4 = round((height_t1_t2 / height_t2_t4), 3)
         print('height_ratio_t1_t2_to_t2_t4', height_ratio_t1_t2_to_t2_t4)
 
-        dist_CP_t1_norm = Line.calculate_distance(t1_norm, CP_norm)
+        dist_CP_t1_norm = Distance.calculate_distance(t1_norm, CP_norm)
         print('dist_CP_t1_norm', dist_CP_t1_norm)
 
         ratio_dist_CP_t1_t3 = aspect_ratio_t1_t3 / dist_CP_t1_norm
@@ -749,7 +750,7 @@ class FanLine:
             dist_var_name = f"dist_{point1_name}_{point2_name}"
 
             # Вычисляем расстояние и сохраняем его в словаре
-            distances[dist_var_name] = Line.calculate_distance(point1_coord,
+            distances[dist_var_name] = Distance.calculate_distance(point1_coord,
                                                                point2_coord)
         return distances
 

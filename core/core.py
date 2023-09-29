@@ -20,7 +20,7 @@ from utils.telegram.send_message import send_message_in_telegram
 from utils.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
-from core.trading.trading_up_from_t4up_alternative import prepare_trading_setup
+from core.trading.trading_one_exp_model_long import prepare_trading_setup
 from core.point_combinations.treand_models.price_level_checker import PriceLevelChecker
 from core.trading_backtester import StrategySimulator
 
@@ -79,8 +79,9 @@ class Worker:
             plot = CandleStickPlotter(df)
             plot.add_candlesticks()
 
-        # Получаем активированные модели, подлежащие анализу
+        # Получаем модели-кандидаты для дальнейшего анализа
         candidates_up = UpTrendModel(df).find_candidates()
+        # Выбираем активированные модели
         # activated_models_up = PriceLevelChecker(df,
         #                                         candidates_up,
         #                                         direction='up_model'
@@ -94,7 +95,7 @@ class Worker:
 
         # Передаем дополнительные параметры
         # одобренных моделей в модуль торговли
-        all_other_parameters_up, trade_plot = StrategySimulator(
+        all_other_parameters_up = StrategySimulator(
             'long').trade_process(
             df,
             all_base_setup_parameters
@@ -142,7 +143,7 @@ class MultyWorker:
         s_date, u_date,
         images=False,
         debug=True,
-        show_progress_bar=False,  # Добавляем этот аргумент
+        show_progress_bar=False,  # Показать прогресс бар
     ):
         self.tickers = tickers
         self.timeframe_intervals = timeframe_intervals
@@ -152,7 +153,7 @@ class MultyWorker:
         self.debug = debug
         self.lock = Lock()
         self.tasks_completed = 0
-        self.show_progress_bar = show_progress_bar  # И сохраняем его как свойство
+        self.show_progress_bar = show_progress_bar
 
     @property
     def tasks_total(self):

@@ -23,35 +23,6 @@ class Point:
 
         return x_intersect_LC_LT_point, y_intersect_LC_LT_point
 
-    # @staticmethod
-    # def find_first_bar_above_price(df, target_price, point1, point2):
-    #     # Сначала создадим массив из столбца 'high', начиная с индекса model.t4[0]
-    #     high_prices = df.loc[point1:point2, 'high'].values
-    #     # Ищем индексы, где high > target_price
-    #     above_target_price_indices = np.where(high_prices > target_price)[0]
-    #     # Если нет таких индексов, возвращаем None
-    #     if above_target_price_indices.size == 0:
-    #         return None
-    #     # Берем первый индекс, если есть хотя бы один
-    #     first_bar_above_target_price = above_target_price_indices[0] + int(
-    #         point1)
-    #     return first_bar_above_target_price
-    #
-    # @staticmethod
-    # def find_first_bar_below_price(df, target_price, point1, point2):
-    #     # Сначала создадим массив из столбца 'high',
-    #     # начиная с индекса model.t4[0]
-    #     low_prices = df.loc[point1:point2, 'low'].values
-    #     # Ищем индексы, где high < target_price
-    #     above_target_price_indices = np.where(low_prices < target_price)[0]
-    #     # Если нет таких индексов, возвращаем None
-    #     if above_target_price_indices.size == 0:
-    #         return None
-    #     # Берем первый индекс, если есть хотя бы один
-    #     first_bar_above_target_price = above_target_price_indices[0] + int(
-    #         point1)
-    #     return first_bar_above_target_price
-
     @staticmethod
     def find_first_bar_by_price(df, target_price, point1, point2,
                                 direction='above'):
@@ -81,25 +52,6 @@ class Point:
         first_bar_by_price = (first_bar_by_target_price_index, target_price)
 
         return first_bar_by_price
-
-    # @staticmethod
-    # def find_LT_break_point(df, t4up, index, slope, intercept):
-    #     """Находит точку достижения ЛТ "лоем" бара."""
-    #     LT_break_point = None
-    #     # Получаем все бары между t3up[0]+1 и t4up[0]-1
-    #     low = df.loc[t4up[0]:index, 'low']
-    #     # Вычисляем, какие бары пересекают линию
-    #     intersects = low < (slope * low.index + intercept)
-    #     # Если есть пересечения
-    #     if intersects.any():
-    #         # Выбираем индексы пересечений
-    #         intersect_indices = low[intersects].index
-    #         if not intersect_indices.empty:
-    #             # Возвращает выбранный бар, пересекающий линию
-    #             LT_break_point = intersect_indices[0]
-    #             return (LT_break_point, slope * LT_break_point + intercept)
-    #         else:
-    #             return None
 
     @staticmethod
     def find_LT_break_point_close(df, t4up, index, slope, intercept):
@@ -166,20 +118,6 @@ class Point:
             else:
                 return None
 
-    # @staticmethod
-    # def find_t5(df, t2, t4, first_bar_by_price):
-    #     """Находит и проверяет т5."""
-    #     t5_index = df.loc[(t4[0] + 1):first_bar_by_price,
-    #                  'low'].idxmin()
-    #     t5_price = df.loc[t5_index, 'low']
-    #     if t5_price >= t4[1]:
-    #         return None
-    #     t5 = (t5_index, t5_price)
-    #     if not Point.check_t2_t5(df, t2, t5):
-    #         return None
-    #     else:
-    #         return t5
-
     @staticmethod
     def find_t5(df, t2, t4, first_bar_by_price, direction='up_model'):
         """Находит и проверяет т5 для up_model или down_model."""
@@ -205,27 +143,10 @@ class Point:
         else:
             return t5
 
-    # @staticmethod
-    # def check_t2_t5(df, t2, t5):
-    #     """Проверяет наличие пересечения телами свечей т2 и т5."""
-    #     if t5 is None:
-    #         return False
-    #     else:
-    #         # Проверка пересечение тел свечей т2-т5
-    #         t2_candle = df.loc[t2[0]]
-    #         t5up_candle = df.loc[t5[0]]
-    #
-    #         t2_upper_body_edge = max(t2_candle['open'],
-    #                                  t2_candle['close'])
-    #         t5up_lower_body_edge = min(t5up_candle['open'],
-    #                                    t5up_candle['close'])
-    #
-    #         if t2_upper_body_edge < t5up_lower_body_edge:
-    #             return True
-
     @staticmethod
     def check_t2_t5(df, t2, t5, direction='up_model'):
-        """Проверяет наличие пересечения телами свечей т2 и т5 для up_model или down_model."""
+        """Проверяет наличие пересечения телами свечей т2 и т5
+        для up_model или down_model."""
         if t5 is None:
             return False
         else:
