@@ -16,7 +16,7 @@ from utils.excel_saver import ExcelSaver
 from utils.excel_combiner_autostart import combine_excel_files
 from utils.validation_trade_orders import validation_trade_orders
 from utils.new_position_to_data import add_position_to_data
-from utils.telegram.send_message import send_message_in_telegram
+from utils.telegram.send_message import TelegramMessage
 from utils.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
@@ -214,7 +214,7 @@ class MultyWorker:
             # Если среди добавленных строк есть новые,
             # тогда отправляем в Телеграм
             if not new_rows.empty:
-                send_message_in_telegram(new_rows)
+                TelegramMessage.send_message_in_telegram(new_rows)
         # Запускаем функцию проверки состояния открытых позиций
         position_monitoring()
 
