@@ -14,8 +14,11 @@ class PositionMonitoring:
         self.telegram_notifier = TelegramNotifier()
         self.filepath = config.TELEGRAM_DIR + 'order_in_process_data.csv'
 
-    def notify(self, message):
-        self.telegram_notifier.send_message(message)
+    def notify(self, message_id, message):
+        self.telegram_notifier.send_message(message_id, message)
+
+    def send_image(self, message_id, date, ticker):
+        self.telegram_notifier.send_image(message_id, date, ticker)
 
     def check_positions(self):
         # Загрузка существующих данных
@@ -29,6 +32,7 @@ class PositionMonitoring:
             stop = float(row['Стоп'])
             take = float(row['Тейк'])
             force_close_date_str = row['Принудительно закрыть']
+            message_id = row['message_id']
             percentage_change_take = ((take - entry) / entry) * 100
             percentage_change_stop = ((stop - entry) / entry) * 100
 
@@ -83,15 +87,18 @@ class PositionMonitoring:
                 # Удаляем строку из файла
                 existing_data_df.drop(index, inplace=True)
                 if close_reason == 'Take':
-                    self.notify(
+                    self.notify(message_id,
                         f'#{ticker}.\nТейк достигнут!\n'
                         f'Сделка закрыта {percentage_change_take:.2f}%'
                     )
+                    self.send_image(message_id, s_date_perv, ticker)
+
                 if close_reason == 'Stop':
-                    self.notify(
+                    self.notify(message_id,
                         f'#{ticker}.\nСтоп достигнут!\n'
                         f'Сделка закрыта {percentage_change_stop:.2f}%'
                     )
+                    self.send_image(message_id, s_date_perv, ticker)
                 if close_reason == 'Force Close':
                     # Последний бар из DataFrame
                     last_bar = df.iloc[-1]
@@ -104,11 +111,11 @@ class PositionMonitoring:
                         (last_close_price - entry_price) / entry_price) * 100
 
                     # Отправляем сообщение с percentage_change
-                    self.notify(
+                    self.notify(message_id,
                         f'#{ticker}.\nВремя сделки истекло!\n'
                         f'Сделка закрыта {percentage_change:.2f}%'
                     )
-
+                    self.send_image(message_id, s_date_perv, ticker)
                 # Сохранение обновленного файла
                 existing_data_df.to_csv(self.filepath, index=False,
                                         encoding='utf-8-sig')
@@ -136,10 +143,8 @@ def position_monitoring():
     monitor = PositionMonitoring()
     monitor.check_positions()
 
-# def start():
-#     # Вызов функции для проверки позиций
-#     monitor = PositionMonitoring()
-#     monitor.check_positions()
-#
+
 # if __name__ == '__main__':
-#     start()
+#     config.IMAGES_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4/data/images/'
+#     config.TELEGRAM_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4//utils/telegram/'
+#     position_monitoring()

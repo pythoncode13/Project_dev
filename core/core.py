@@ -25,6 +25,7 @@ from core.point_combinations.treand_models.price_level_checker import PriceLevel
 from core.trading_backtester import StrategySimulator
 
 from core.point_combinations.treand_models.up_trend_model import UpTrendModel
+from other_modules.clear_directory import clear_directory
 
 
 class AppInitializer:
@@ -44,11 +45,9 @@ class AppInitializer:
         if not os.path.exists(config.BIGDATA_DIR):
             os.makedirs(config.BIGDATA_DIR)
 
-        # # Очищаем папку results
-        # files = glob.glob(f'{config.RESULTS_DIR}*')
-        # for f in files:
-        #     if os.path.exists(f):
-        #         os.remove(f)
+        # Очищаем папки images и results
+        clear_directory(config.IMAGES_DIR)
+        clear_directory(config.RESULTS_DIR)
 
 
 class Worker:

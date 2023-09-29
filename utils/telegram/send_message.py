@@ -5,9 +5,6 @@ import os
 
 import config
 
-# config.IMAGES_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4/data/images/'
-# config.TELEGRAM_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4//utils/telegram/'
-
 
 class TelegramMessage:
     def __init__(self):
@@ -106,19 +103,7 @@ class TelegramMessage:
         else:
             print(f"Ошибка отправки изображения для {ticker}: {response_image.content}")
 
-    def send_message_in_telegram(self):
-
-        # # '''__________________________________________________________________'''
-        # folder = os.path.join(os.path.dirname(
-        #     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'data')
-        # filename = 'data — копия.csv'
-        # filepath = os.path.join(folder, filename)
-        #
-        #
-        # print('test')
-        # # Загрузка данных
-        # new_rows = pd.read_csv(filepath, encoding='utf-8-sig')
-        # # '''__________________________________________________________________'''
+    def send_message_in_telegram(self, new_rows):
 
         # Проходим по каждой строке и отправляем сообщение
         for index, row in new_rows.iterrows():
@@ -153,4 +138,17 @@ class TelegramMessage:
 
 
 # if __name__ == '__main__':
-#     TelegramMessage().send_message_in_telegram()
+#     config.IMAGES_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4/data/images/'
+#     config.TELEGRAM_DIR = 'C:/Users/Home/Desktop/Strategy/MultipointsStrategy_v1 working buy at t4//utils/telegram/'
+#     # '''__________________________________________________________________'''
+#     folder = os.path.join(os.path.dirname(
+#         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'data')
+#     filename = 'data — копия.csv'
+#     filepath = os.path.join(folder, filename)
+#
+#
+#     print('test')
+#     # Загрузка данных
+#     new_rows = pd.read_csv(filepath, encoding='utf-8-sig')
+#     # '''__________________________________________________________________'''
+#     TelegramMessage().send_message_in_telegram(new_rows)

@@ -1,12 +1,37 @@
 import requests
 import config
 
+
 class TelegramNotifier:
     def __init__(self):
         self.token = config.token
         self.chat_id = config.chat_id
-        self.base_url = f'https://api.telegram.org/bot{self.token}/sendMessage'
+        self.url_message = config.url_message
+        self.url_image = config.url_image
 
-    def send_message(self, text):
-        payload = {'chat_id': self.chat_id, 'text': text}
-        requests.post(self.base_url, data=payload)
+    def send_message(self, message_id, text):
+        payload = {
+            'chat_id': self.chat_id,
+            'text': text,
+            "reply_to_message_id": message_id,
+        }
+        requests.post(self.url_message, data=payload)
+
+    def send_image(self, message_id, date, ticker):
+        # Отправка изображения
+        image_path = f"{config.IMAGES_DIR}{ticker}-{date}.png"
+        with open(image_path, 'rb') as image:
+            payload_image = {
+                "chat_id": self.chat_id,
+                "caption": f"#{ticker}",
+                "parse_mode": "Markdown",
+                "reply_to_message_id": message_id
+            }
+            files = {'photo': image}
+            response_image = requests.post(self.url_image, data=payload_image,
+                                           files=files)
+            # Проверка успешности запроса
+        if response_image.status_code == 200:
+            print(f"Изображение для {ticker} отправлено!")
+        else:
+            print(f"Ошибка отправки изображения для {ticker}: {response_image.content}")
