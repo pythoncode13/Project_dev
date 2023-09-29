@@ -48,7 +48,7 @@ class StrategySimulator:
                 close_point[0] - params.entry_index # длительность сделки
                 )
 
-    def trade_process(self, df, all_base_setup_parameters):
+    def trade_process(self, all_base_setup_parameters):
         """
         Процесс симуляции торговли.
 
@@ -63,8 +63,10 @@ class StrategySimulator:
             model = parameters[2]
 
             # Срез данных для анализа
-            sub_df = df.iloc[
-                params.entry_index: min(params.entry_index + 101, len(df))
+            sub_df = model.df.iloc[
+                params.entry_index: min(
+                    params.entry_index + 101, len(model.df)
+                )
             ].copy()
             sub_df['dateTime'] = pd.to_datetime(sub_df['dateTime'])
 

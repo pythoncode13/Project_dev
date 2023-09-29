@@ -20,7 +20,7 @@ from utils.telegram.send_message import TelegramMessage
 from utils.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
-from core.trading.trading_one_exp_model_long import prepare_trading_setup
+from core.trading.trading_one_exp_model_long import prepare_trading_setup, one_exp_model_long
 from core.point_combinations.treand_models.price_level_checker import PriceLevelChecker
 from core.trading_backtester import StrategySimulator
 
@@ -80,48 +80,15 @@ class Worker:
 
         # Получаем модели-кандидаты для дальнейшего анализа
         candidates_up = UpTrendModel(df).find_candidates()
-        # Выбираем активированные модели
-        # activated_models_up = PriceLevelChecker(df,
-        #                                         candidates_up,
-        #                                         direction='up_model'
-        #                                         ).activate_models()
-        # Вычисления для торговли
-        # Получаем параметры модели
-        all_base_setup_parameters = prepare_trading_setup(df,
-                                                          candidates_up,
-                                                          self.ticker
-                                                          )
-
-        # Передаем дополнительные параметры
-        # одобренных моделей в модуль торговли
-        all_other_parameters_up = StrategySimulator(
-            'long').trade_process(
-            df,
-            all_base_setup_parameters
-        )
-        # if self.images:
-        #     for model in candidates_up:
-        #         plot.add_trend_points(model)
-        #         # plot.add_trade_points(trade_plot)
-
-
-        # Сохраняем результаты
-        ExcelSaver(
-            self.ticker,
-            'long',
-            self.timeframe,
-            self.s_date,
-            self.u_date,
-            all_other_parameters_up,
-        ).save()
-        # ExcelSaver(
-        #     self.ticker,
-        #     'short',
-        #     self.timeframe,
-        #     self.s_date,
-        #     self.u_date,
-        #     all_other_parameters_down,
-        # ).save()
+        # Отправляем модели-кандидаты в модуль торговли
+        # Торговля одной модели расширения, лонг
+        one_exp_model_long(
+                           candidates_up,
+                           self.ticker,
+                           self.timeframe,
+                           self.s_date,
+                           self.u_date
+                           )
 
         if self.images:
             s_date_date_only = self.s_date.split()[0]
