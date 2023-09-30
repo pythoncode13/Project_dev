@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from core.loader_binance import LoaderBinance
 from binance import Client
 from core.position_evaluator import PositionEvaluator
-from utils.telegram.telegram_notifier import TelegramNotifier
+from other_modules.telegram.telegram_notifier import TelegramNotifier
 from utils.progress_bar_utils import add_progress_bar
 import config
 

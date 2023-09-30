@@ -12,9 +12,9 @@ from core.candle_plot import CandleStickPlotter
 from core.loader_binance import LoaderBinance
 
 from utils.excel_combiner_autostart import combine_excel_files
-from utils.telegram.new_position_to_data import add_position_to_data
-from utils.telegram.send_message import TelegramMessage
-from utils.telegram.position_monitoring import position_monitoring
+from other_modules.telegram.new_position_to_data import add_position_to_data
+from other_modules.telegram.send_message import TelegramMessage
+from other_modules.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
 from core.trading.trading_one_exp_model_long import trade_one_exp_model_long
