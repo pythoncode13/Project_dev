@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", category=np.RankWarning)
 DEV = False
 
 # Включаем(True)/Выключаем(False) планировщик
-ENABLE_SCHEDULER = False
+ENABLE_SCHEDULER = True
 
 
 def start():
