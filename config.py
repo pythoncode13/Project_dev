@@ -232,6 +232,7 @@ api_secret = 'fQLPCg3dVy8y2SQQAHUSCSOhN94BzlyZOMY2dDfahevcPfU5foFyasy4TfHEHe9N'
 # Ключи Telegram
 token = "6048284555:AAHP2qXwhOEpVSiMOWtLGJ_eUlYVirpnDVc"
 chat_id = "@bot_torgyet"
+url_base = f"https://api.telegram.org/bot{token}/"
 url_message = f"https://api.telegram.org/bot{token}/sendMessage"
 url_image = f"https://api.telegram.org/bot{token}/sendPhoto"
 

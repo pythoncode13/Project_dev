@@ -1,6 +1,6 @@
+import pandas as pd
 import requests
 from datetime import datetime, timedelta
-import pandas as pd
 import os
 
 import config
@@ -84,57 +84,47 @@ class TelegramMessage:
 
         return text_message, message_data
 
-    def send_image(self, message_id, date, ticker):
+    def send_message(self, row, text_message, message_data):
+        date = row['Дата']
+        ticker = row['ticker']
+
         # Отправка изображения
         image_path = f"{config.IMAGES_DIR}{ticker}-{date}.png"
         with open(image_path, 'rb') as image:
             payload_image = {
                 "chat_id": self.chat_id,
-                "caption": f"#{ticker}",
+                "caption": f"#{text_message}",
                 "parse_mode": "Markdown",
-                "reply_to_message_id": message_id
             }
             files = {'photo': image}
-            response_image = requests.post(self.url_image, data=payload_image,
+            response = requests.post(self.url_image, data=payload_image,
                                            files=files)
             # Проверка успешности запроса
-        if response_image.status_code == 200:
+        if response.status_code == 200:
             print(f"Изображение для {ticker} отправлено!")
+            # Получаем ID отправленного сообщения
+            message_id = response.json().get('result', {}).get('message_id')
+
+            # Добавляем информацию о позиции и ID сообщения
+            # в файл order_in_process_data.csv
+            self.add_order_in_process(message_data, message_id)
         else:
-            print(f"Ошибка отправки изображения для {ticker}: {response_image.content}")
+            print(f"Ошибка отправки изображения для {ticker}: {response.content}")
 
     def send_message_in_telegram(self, new_rows):
-
+        """
+        Проверяет новые строки, создает сообщение, отправляет сообщение и
+        изображение, добавляет строки(сделки) в файл для наблюдения -
+        order_in_process_data.csv
+        """
         # Проходим по каждой строке и отправляем сообщение
         for index, row in new_rows.iterrows():
+            # Создаем сообщение
             text_message, message_data = self.create_message(row, balance=1600, risk=0.01)
 
-            # Параметры для отправки сообщения
-            payload = {
-                "chat_id": self.chat_id,
-                "text": text_message,
-                "parse_mode": "Markdown"  # Указываем, что используем разметку Markdown
-            }
+            # Отправляем сообщение
+            self.send_message(row, text_message, message_data)
 
-            # Отправка POST-запроса
-            response = requests.post(self.url_message, data=payload)
-
-            # Проверка успешности запроса
-            if response.status_code == 200:
-                print(f"Сообщение для {row['ticker']} отправлено!")
-
-                # Получаем ID отправленного сообщения
-                message_id = response.json().get('result', {}).get('message_id')
-
-                # Добавляем информацию о позиции и ID сообщения
-                # в файл order_in_process_data.csv
-                self.add_order_in_process(message_data, message_id)
-                # Отправляем изображение
-                date = row['Дата']
-                ticker = row['ticker']
-                self.send_image(message_id, date, ticker)
-            else:
-                print(f"Ошибка отправки сообщения для {row['ticker']}: {response.content}")
 
 
 # if __name__ == '__main__':
