@@ -35,6 +35,9 @@ def combine_excel_files():
     # Удаляем дубликаты в df по совпадению в столбцах "Дата", "ticker", "Вход"
     final_df = final_df.drop_duplicates(subset=['Дата', 'ticker', 'Вход'])
 
+    # Сортировка DataFrame по столбцу "Дата"
+    final_df = final_df.sort_values(by=['Дата'])
+
     # Создаем новый файл Excel и сохраняем итоговый df в него
     filename = '__final_output_new.xlsx'
     filepath = os.path.join(folder, filename)

@@ -26,10 +26,14 @@ def add_position_to_data(trades_to_make):
     # Объединение существующих данных и новых данных
     combined_data = pd.concat([existing_data_df, trades_to_make]).drop_duplicates()
 
+    # Сортировка DataFrame по столбцу "Дата"
+    combined_data = combined_data.sort_values(by=['Дата'])
+
     # Сохранение объединенного датафрейма в CSV-файл
     combined_data.to_csv(filepath, index=False, encoding='utf-8-sig')
 
-    # Находим строки, которые присутствуют только в combined_data, но не в existing_data_df
+    # Находим строки, которые присутствуют только в combined_data,
+    # но не в existing_data_df
     new_rows = combined_data.merge(existing_data_df, how='outer',
                                    indicator=True)
     new_rows = new_rows[new_rows['_merge'] == 'left_only'].drop(

@@ -8,7 +8,6 @@ from core.trading_backtester import StrategySimulator
 from utils.excel_saver import ExcelSaver
 
 
-@timing_decorator
 def prepare_trading_setup(activated_models_up, ticker):
     """Подготовка данных для сетапа."""
 

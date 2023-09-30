@@ -135,7 +135,7 @@ class PositionMonitoring:
                     price_percentage_change
                 )
         else:
-            print("Нет активных сделок.")
+            print("Нет новых сделок.")
 
 
 def position_monitoring():

@@ -1,7 +1,9 @@
 import time
 from functools import wraps
 
+
 def timing_decorator(func):
+    # @timing_decorator
     @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.perf_counter()

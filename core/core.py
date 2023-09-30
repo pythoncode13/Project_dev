@@ -4,7 +4,7 @@ import logging
 import colorlog
 
 import os
-import glob
+# import glob
 from multiprocessing import Lock
 import pandas as pd
 
@@ -110,6 +110,7 @@ class MultyWorker:
         images=False,
         debug=False,
         show_progress_bar=False,  # Показать прогресс бар
+        telegram=False,  # Отправка сообщений в Телеграм
     ):
         self.tickers = tickers
         self.timeframe_intervals = timeframe_intervals
@@ -120,7 +121,7 @@ class MultyWorker:
         self.lock = Lock()
         self.tasks_completed = 0
         self.show_progress_bar = show_progress_bar
-
+        self.telegram = telegram
     @property
     def tasks_total(self):
         """Общее количество задач."""
@@ -159,30 +160,26 @@ class MultyWorker:
             for worker in workers:
                 worker.work()
 
-        # """Обрабатываем полученные файлы."""
         # Соединяем эксель файлы
-        # combine_excel_files()
-        # Выбираем валидные сетапы
-        # trades_to_make = validation_trade_orders()
+        combine_excel_files()
 
-        # # Загрузка данных excel
-        # trades_to_make = pd.read_excel(
-        #     config.RESULTS_DIR + '__final_output_new.xlsx'
-        # )
-        #
-        # # if new_df.empty:
-        # #     return None
-        #
-        # if trades_to_make is not None:
-        #     print(trades_to_make)
-        #     # Добавляем уникальные строки в базу
-        #     new_rows = add_position_to_data(trades_to_make)
-        #     # Если среди добавленных строк есть новые,
-        #     # тогда отправляем в Телеграм
-        #     if not new_rows.empty:
-        #         TelegramMessage.send_message_in_telegram(new_rows)
-        # # Запускаем функцию проверки состояния открытых позиций
-        # position_monitoring()
+        # Запускаем обработку файлов и Телеграм бота
+        if self.telegram:
+            # Загрузка данных excel
+            trades_to_make = pd.read_excel(
+                config.RESULTS_DIR + '__final_output_new.xlsx'
+            )
+
+            if trades_to_make is not None:
+                print(f'\n{trades_to_make}')
+                # Добавляем уникальные строки в базу
+                new_rows = add_position_to_data(trades_to_make)
+                # Если среди добавленных строк есть новые,
+                # тогда отправляем в Телеграм
+                if not new_rows.empty:
+                    TelegramMessage().send_message_in_telegram(new_rows)
+            # Запускаем функцию проверки состояния открытых позиций
+            position_monitoring()
 
     def progress_indicator(self, _):
         with self.lock:

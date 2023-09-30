@@ -1,3 +1,4 @@
+import numpy as np
 from core.core import AppInitializer, MultyWorker
 import schedule
 import time
@@ -6,13 +7,14 @@ import config
 
 import warnings
 
-# Игнорировать FutureWarning
+# Игнорировать FutureWarning и RankWarning
 warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=np.RankWarning)
 
 DEV = False
 
 # Включаем(True)/Выключаем(False) планировщик
-ENABLE_SCHEDULER = False
+ENABLE_SCHEDULER = True
 
 
 def start():
@@ -26,27 +28,27 @@ def start():
         tickers = config.tickers
         timeframes = ['30MINUTE']
 
-        s_date = "2023-09-20 00:00:00"
-        u_date = "2023-09-29 10:00:00"
+        s_date = "2023-01-01 00:00:00"
+        u_date = "2023-09-30 10:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=True,
                              debug=False,
-                             show_progress_bar=False
+                             show_progress_bar=False,
+                             telegram=False
                              )
         worker.work()
 
     else:
         tickers = config.tickers
         timeframes = config.timeframes
-        # s_date = config.s_date
-        # u_date = config.u_date
-        s_date = "2023-01-20 00:00:00"
-        u_date = "2023-09-29 00:00:00"
+        s_date = config.s_date
+        u_date = config.u_date
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
                              debug=False,
-                             show_progress_bar=True
+                             show_progress_bar=True,
+                             telegram=True
                              )
         worker.work()
 

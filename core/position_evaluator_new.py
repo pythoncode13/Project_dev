@@ -59,12 +59,12 @@ class PositionEvaluator:
 
         # Если тейк достигнут
         if self.take_reached:
-            print(f"{self.ticker} Сделка закрыта по \033[32mтейку\033[0m.")
+            # print(f"{self.ticker} Сделка закрыта по \033[32mтейку\033[0m.")
             return True, "Take", (self.take_index, self.take_price)
 
         # Если стоп достигнут
         if self.stop_reached:
-            print(f"{self.ticker} Сделка закрыта по \033[31mстопу\033[0m.")
+            # print(f"{self.ticker} Сделка закрыта по \033[31mстопу\033[0m.")
             return True, "Stop", (self.stop_index, self.df.loc[self.stop_index, 'close'])
 
         # Если ни стоп ни тейк не были достигнуты
@@ -73,9 +73,9 @@ class PositionEvaluator:
 
             closest_index = self.df.index[-1]
 
-            print(
-                f"{self.ticker} Сделка закрыта \033[35mпринудительно\033[0m."
-            )
+            # print(
+            #     f"{self.ticker} Сделка закрыта \033[35mпринудительно\033[0m."
+            # )
             return True, "Force Close", (
                 closest_index, self.df.loc[closest_index, 'close']
             )
