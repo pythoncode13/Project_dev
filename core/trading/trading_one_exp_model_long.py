@@ -91,7 +91,7 @@ def prepare_trading_setup(activated_models_up, ticker):
     return all_base_setup_parameters
 
 
-def one_exp_model_long(models, ticker, timeframe, s_date, u_date):
+def trade_one_exp_model_long(models, ticker, timeframe, s_date, u_date):
     # Отбираем из модели для торговли
     setup_parameters = prepare_trading_setup(models, ticker)
     # Торгуем выбранные модели

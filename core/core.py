@@ -4,7 +4,6 @@ import logging
 import colorlog
 
 import os
-# import glob
 from multiprocessing import Lock
 import pandas as pd
 
@@ -12,17 +11,13 @@ import config
 from core.candle_plot import CandleStickPlotter
 from core.loader_binance import LoaderBinance
 
-from utils.excel_saver import ExcelSaver
 from utils.excel_combiner_autostart import combine_excel_files
-from utils.validation_trade_orders import validation_trade_orders
-from utils.new_position_to_data import add_position_to_data
+from utils.telegram.new_position_to_data import add_position_to_data
 from utils.telegram.send_message import TelegramMessage
 from utils.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
-from core.trading.trading_one_exp_model_long import prepare_trading_setup, one_exp_model_long
-from core.point_combinations.treand_models.price_level_checker import PriceLevelChecker
-from core.trading_backtester import StrategySimulator
+from core.trading.trading_one_exp_model_long import trade_one_exp_model_long
 
 from core.point_combinations.treand_models.up_trend_model import UpTrendModel
 from other_modules.clear_directory import clear_directory
@@ -82,19 +77,19 @@ class Worker:
         candidates_up = UpTrendModel(df).find_candidates()
         # Отправляем модели-кандидаты в модуль торговли
         # Торговля одной модели расширения, лонг
-        one_exp_model_long(
-                           candidates_up,
-                           self.ticker,
-                           self.timeframe,
-                           self.s_date,
-                           self.u_date
-                           )
+        trade_one_exp_model_long(
+                                 candidates_up,
+                                 self.ticker,
+                                 self.timeframe,
+                                 self.s_date,
+                                 self.u_date
+                                 )
 
         if self.images:
             s_date_date_only = self.s_date.split()[0]
             u_date_date_only = self.u_date.split()[0]
             filename = (
-                config.IMAGES_DIR + f'{self.ticker}-{self.timeframe}-{s_date_date_only}-{u_date_date_only}.png'
+                    config.IMAGES_DIR + f'{self.ticker}-{self.timeframe}-{s_date_date_only}-{u_date_date_only}.png'
             )
             plot.save(filename)
 
@@ -103,14 +98,14 @@ class MultyWorker:
     """Многопоточная обработка конфигурации."""
 
     def __init__(
-        self,
-        tickers,
-        timeframe_intervals,
-        s_date, u_date,
-        images=False,
-        debug=False,
-        show_progress_bar=False,  # Показать прогресс бар
-        telegram=False,  # Отправка сообщений в Телеграм
+            self,
+            tickers,
+            timeframe_intervals,
+            s_date, u_date,
+            images=False,
+            debug=False,
+            show_progress_bar=False,  # Показать прогресс бар
+            telegram=False,  # Отправка сообщений в Телеграм
     ):
         self.tickers = tickers
         self.timeframe_intervals = timeframe_intervals
@@ -122,6 +117,7 @@ class MultyWorker:
         self.tasks_completed = 0
         self.show_progress_bar = show_progress_bar
         self.telegram = telegram
+
     @property
     def tasks_total(self):
         """Общее количество задач."""

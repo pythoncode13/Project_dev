@@ -19,13 +19,13 @@ class TelegramNotifier:
         }
         requests.post(self.url_message, data=payload)
 
-    def send_image(self, message_id, date, ticker):
+    def send_message_with_image(self, message_id, date, ticker, text):
         # Отправка изображения
         image_path = f"{config.IMAGES_DIR}{ticker}-{date}.png"
         with open(image_path, 'rb') as image:
             payload_image = {
                 "chat_id": self.chat_id,
-                "caption": f"#{ticker}",
+                "caption": text,
                 "parse_mode": "Markdown",
                 "reply_to_message_id": message_id
             }
@@ -38,36 +38,4 @@ class TelegramNotifier:
         else:
             print(f"Ошибка отправки изображения для {ticker}: {response_image.content}")
 
-    def send_combined_message(self, text, image_path):
-        # Шаг 1: Загрузим изображение и получим его file_id
-        with open(image_path, 'rb') as image:
-            files = {'photo': image}
-            payload = {"chat_id": self.chat_id}
-            response = requests.post(f"{self.url_base}sendPhoto", data=payload,
-                                     files=files)
-            if response.status_code == 200:
-                file_id = json.loads(response.content)['result']['photo'][-1][
-                    'file_id']
-            else:
-                print("Не могу загрузить фото")
-                return
 
-        # Шаг 2: Отправляем медиа-группу
-        media_group = [
-            {"type": "photo", "media": file_id},
-            {"type": "text", "caption": text}
-        ]
-
-        payload = {
-            "chat_id": self.chat_id,
-            "media": json.dumps(media_group)
-        }
-
-        response = requests.post(f"{self.url_base}sendMediaGroup",
-                                 data=payload)
-
-        # Проверка успешности запроса
-        if response.status_code == 200:
-            print(f"Сообщение и изображение успешно отправлены!")
-        else:
-            print(f"Ошибка: {response.content}")

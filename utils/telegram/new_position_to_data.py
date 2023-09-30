@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+import config
 
 
 def add_position_to_data(trades_to_make):
@@ -14,12 +14,7 @@ def add_position_to_data(trades_to_make):
     trades_to_make['Стоп'] = trades_to_make['Стоп'].round(5)
     trades_to_make['Тейк'] = trades_to_make['Тейк'].round(5)
 
-    folder = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
-
-    filename = 'data.csv'
-    filepath = os.path.join(folder, filename)
-
+    filepath = config.TELEGRAM_DIR + 'data.csv'
     # Загрузка существующих данных из CSV-файла в DataFrame
     existing_data_df = pd.read_csv(filepath, encoding='utf-8-sig')
 
