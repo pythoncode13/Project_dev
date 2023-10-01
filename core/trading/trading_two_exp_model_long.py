@@ -129,15 +129,15 @@ def trade_two_exp_model_long(candidates_up,
                              s_date,
                              u_date
                              ):
-
+    # Объединяем две модели
     super_groups = TwoModel(
                             candidates_up,
                             candidates_down
                             ).find_two_model()
 
-    # Отбираем из модели для торговли
+    # Отбираем пары моделей для торговли
     setup_parameters = prepare_trading_setup(super_groups, ticker)
-    # Торгуем выбранные модели
+    # Торгуем выбранные пары
     all_other_parameters_up = StrategySimulator(
         'long').trade_process(setup_parameters)
     # Сохраняем результаты

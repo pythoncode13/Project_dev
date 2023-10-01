@@ -1,4 +1,4 @@
-from core.point_combinations.treand_models.down_model_property import DownModelProperty
+from core.point_combinations.treand_models.down_model_property import DownModelProperty, ModelPlot
 
 
 class DownExpModel:
@@ -15,3 +15,7 @@ class DownExpModel:
         self.activation_method = activation_method
         self.activation_variable = activation_variable
         self.properties = DownModelProperty(df, t1, t2, t3, t4, CP, LT, LC)
+        self.plot = None  # Сначала создаем пустой plot
+
+    def initialize_plot(self, start_index):
+        self.plot = ModelPlot(self, start_index)

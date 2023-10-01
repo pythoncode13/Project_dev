@@ -47,15 +47,15 @@ class DownTrendModel(TrendModel):
         # проводим линию ЛЦ
         LC = Line.calculate(t2, t4)
 
-        # # валидация
-        # if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
-        #                    direction='low'):
-        #     t4_1 = Line.correction_LC_t4_1_down(df, t2, t4, LC.slope, LC.intercept)
-        #     t2_1 = Line.correction_LC_t2_1_down(df, t1, t2, t4_1)
-        #
-        #     LC = Line.calculate(t2_1, t4_1)
-        #     # plt.plot(LC.points[0], LC.points[1], ':',
-        #     #          color='purple', linewidth=0.9)
+        # валидация
+        if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
+                           direction='low'):
+            t4_1 = Line.correction_LC_t4_1_down(df, t2, t4, LC.slope, LC.intercept)
+            t2_1 = Line.correction_LC_t2_1_down(df, t1, t2, t4_1)
+
+            LC = Line.calculate(t2_1, t4_1)
+            # plt.plot(LC.points[0], LC.points[1], ':',
+            #          color='purple', linewidth=0.9)
         #     if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0),
         #                        t4_1,
         #                        direction='low'):
@@ -83,9 +83,9 @@ class DownTrendModel(TrendModel):
 
             # Получаем ЛЦ, корректируем ее
             LC = self.add_lc_line(self.df, t1, t2, t4)
-            # Если коррекция невозможна - пропускаем итерацию
-            if LC is None:
-                continue
+            # # Если коррекция невозможна - пропускаем итерацию
+            # if LC is None:
+            #     continue
 
             # Проверяем, что две линии не параллельны друг-другу
             if LT.slope == LC.slope:
@@ -93,7 +93,7 @@ class DownTrendModel(TrendModel):
             # Находим и определяем желательный угол между линиями
             parallel = Line.cos_sim_down(LT.slope, LC.slope)
 
-            if parallel >= 30:
+            if parallel >= 60:
                 continue
             # Находим точку пересечения
             CP = Point.find_intersect_two_line_point(LC.intercept,

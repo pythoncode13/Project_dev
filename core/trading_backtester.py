@@ -61,7 +61,7 @@ class StrategySimulator:
         for parameters in all_base_setup_parameters:
             params = TradeParameters(*parameters[0])
             model = parameters[2]
-
+            model2 = parameters[3]
             # Срез данных для анализа
             sub_df = model.df.iloc[
                 params.entry_index: min(
@@ -101,11 +101,11 @@ class StrategySimulator:
             )
 
             # Отрисовываем сделку
-            self.plot_trade(close_point, params, model)
+            self.plot_trade(close_point, params, model, model2)
 
         return all_other_parameters_up
 
-    def plot_trade(self, close_point, params, model):
+    def plot_trade(self, close_point, params, model, model2):
         """
         Отрисовка результатов сделки.
 
@@ -143,6 +143,16 @@ class StrategySimulator:
                 params.stop_price, params.take_price, close_point_plot
             )
         )
+        if model2:
+            model2.initialize_plot(start_index)
+            plot.add_trade_elements(
+            sub_df_for_plot, model2.plot,
+            (
+                params.ticker, entry_index_plot, params.entry_price,
+                params.stop_price, params.take_price, close_point_plot
+            )
+        )
+
         plot.save(f"{config.IMAGES_DIR}"
                   f"{params.ticker}-"
                   f"{params.entry_date}.png")

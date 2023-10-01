@@ -62,7 +62,7 @@ class TwoModel:
                 # interval_end = up_LT_break_point_x
 
                 # Проверяем, попадают ли точки из DownExpModel в этот интервал
-                in_interval_t1 = interval_start <= down.t1[0] <= interval_start + 3
+                in_interval_t1 = interval_start <= down.t1[0] <= interval_start
                 # in_interval_t3 = interval_start <= down.t3[0] <= interval_end
 
                 # after_interval_t4 = down.t4[0] >= interval_end
@@ -70,7 +70,8 @@ class TwoModel:
                 # if down.CP[0] > up.t4[0]:
                 #     continue
 
-                if in_interval_t1:
+                if not in_interval_t1:
+                    continue
                 #     up_dist_t4_lt_break = up.t4[1] - float(up_LT_break_point[1])
                 #     up_target_1 = float(up_LT_break_point[1]) - up_dist_t4_lt_break
                 #     if up_target_1 >= (
@@ -87,44 +88,8 @@ class TwoModel:
                     #     if down.t1[1] != max(high_values):
                     #         continue
 
-                    TwoModel.plot_model(up, colors_up)
-                    TwoModel.plot_model(down, colors_down)
-                    super_groups.append(TwoModel(up, down))
+                # TwoModel.plot_model(up, colors_up)
+                # TwoModel.plot_model(down, colors_down)
+                super_groups.append(TwoModel(up, down))
 
         return super_groups
-
-    # def find_two_model(self):
-    #     up_models = self.up_model
-    #     down_models = self.down_model
-    #     super_groups = []
-    #     colors_up = {'t1': 'k', 't2': 'k', 't3': 'k', 't4': 'g'}
-    #     colors_down = {'t1': 'r', 't2': 'r', 't3': 'r', 't4': 'b'}
-    #     for down in down_models:
-    #         down_LT_break_point = Point.find_LT_break_point(down.df,
-    #                                                       down.t4,
-    #                                                       down.properties.dist_cp_t4_x2,
-    #                                                       down.LT.slope,
-    #                                                       down.LT.intercept,
-    #                                                       'down_model'
-    #                                                         )
-    #         if down_LT_break_point is None:
-    #             continue
-    #         plt.plot(down_LT_break_point[0], down_LT_break_point[1], marker='o', color='r')
-    #
-    #         down_LT_break_point_x = int(down_LT_break_point[0])
-    #         for up in up_models:
-    #             # Определяем интервал в UpExpModel
-    #             interval_start = down.t4[0]
-    #             interval_end = down_LT_break_point_x
-    #
-    #             # Проверяем, попадают ли точки из DownExpModel в этот интервал
-    #             in_interval_t1 = interval_start <= up.t1[0] <= interval_end
-    #             in_interval_t3 = interval_start <= up.t3[0] <= interval_end
-    #             after_interval_t4 = interval_end < up.t4[0]
-    #
-    #             if in_interval_t1 and in_interval_t3:
-    #                 TwoModel.plot_model(ax, up, colors_up)
-    #                 TwoModel.plot_model(ax, down, colors_down)
-    #                 super_groups.append(TwoModel(up, down))
-    #
-    #     return super_groups

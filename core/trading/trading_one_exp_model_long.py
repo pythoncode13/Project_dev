@@ -6,6 +6,7 @@ from other_modules.timing_decorator import timing_decorator
 from core.point_combinations.treand_models.advanced_model_propetry import AdvancedModelProperty
 from core.trading_backtester import StrategySimulator
 from utils.excel_saver import ExcelSaver
+from core.model_utilities.line import Line
 
 
 def prepare_trading_setup(activated_models_up, ticker):
@@ -18,7 +19,15 @@ def prepare_trading_setup(activated_models_up, ticker):
         t2 = model.t2
         t3 = model.t3
         t4 = model.t4
-
+        # Сила модели
+        if (int(t3[0]) - int(t1[0])) < (int(t1[0]) - int(model.CP[0])):
+            continue
+        if Line.check_line(model.df,
+                           model.LC.slope,
+                           model.LC.intercept,
+                           (t1[0] + 1, 0), t4,
+                           direction='close'):
+            continue
         """------------- часть про активацию модели ------------"""
         # Находим нижний край тела каждой свечи
         lower_body_edge = model.df[['high']].min(axis=1)

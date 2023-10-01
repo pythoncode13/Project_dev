@@ -1,5 +1,4 @@
-from core.point_combinations.treand_models.up_model_property import UpModelProperty
-from core.point_combinations.treand_models.up_model_property import ModelPlot
+from core.point_combinations.treand_models.up_model_property import UpModelProperty, ModelPlot
 
 
 class UpExpModel:

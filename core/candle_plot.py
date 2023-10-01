@@ -164,6 +164,24 @@ class CandleStickPlotter:
             self.ax.plot(trade.close_point[0], trade.close_point[1],
                          marker='^', color='k', markersize=10)
 
+        # Если есть пробой ЛТ - рисуем таргет
+        if model.properties.target_1:
+            print(model.properties.target_1)
+            # Прямая
+            self.ax.hlines(
+                y=model.properties.target_1,
+                xmin=model.LT_break_point[0],
+                xmax=xmax,
+                colors='black',
+                linestyles='solid',
+                linewidth=1,
+            )
+            # Надпись
+            self.ax.text(model.LT_break_point[0]+5, model.properties.target_1, 'Target 1',
+                         verticalalignment='bottom',
+                         horizontalalignment='left',
+                         color='black', fontsize=30)
+
     def add_trade_elements(self, sub_df_for_plot, model, trade_plot) -> None:
         """Добавляем рисуем модель и торговые уровни в рамках одного трейда."""
 

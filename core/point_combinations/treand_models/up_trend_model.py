@@ -50,13 +50,13 @@ class UpTrendModel(TrendModel):
         # if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
         #                    direction='close'):
         #     return None, None
-        # if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
-        #                    direction='high'):
-        #     t4_1 = Line.correction_LC_t4up1(df, t2, t4, LC.slope, LC.intercept)
-        #     t2_1 = Line.correction_LC_t2up1(df, t1, t2, t4_1)
-        #
-        #     LC = Line.calculate(t2_1, t4_1)
-        #     t2_01 = t2_1
+        if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
+                           direction='high'):
+            t4_1 = Line.correction_LC_t4up1(df, t2, t4, LC.slope, LC.intercept)
+            t2_1 = Line.correction_LC_t2up1(df, t1, t2, t4_1)
+
+            LC = Line.calculate(t2_1, t4_1)
+            t2_01 = t2_1
         #     if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0),
         #                        t4_1,
         #                        direction='high'):
@@ -82,8 +82,8 @@ class UpTrendModel(TrendModel):
             # Получаем ЛЦ, корректируем ее
             LC, t2_1 = self.add_lc_line(self.df, t1, t2, t4)
             # Если коррекция невозможна - пропускаем итерацию
-            if LC is None:
-                continue
+            # if LC is None:
+            #     continue
             # Проверяем, что две линии не параллельны друг-другу
             if LT.slope == LC.slope:
                 continue
@@ -100,23 +100,7 @@ class UpTrendModel(TrendModel):
             # Выбираем МР по расположению СТ
             if CP[0] >= t4[0]:
                 continue
-            # Добавления:
-            CP_n, t1_n, t2_n, t3_n, t4_n = Point.normalize_points([CP, t1, t2, t3, t4])
-            # Сила модели
-            if (int(t3[0]) - int(t1[0])) < (int(t1[0]) - int(CP[0])):
-                continue
-            dist_CP_t1_n = Distance.calculate_distance(CP_n, t1_n)
-            dist_t1_t3_n = Distance.calculate_distance(t1_n, t3_n)
-            # if dist_CP_t1_n > dist_t1_t3_n:
-            #     continue
-            # т4 в два раза выше т2
-            dist_h_t1_t2_n = t2_n[1] - t1_n[1]
-            dist_h_t2_t4_n = t4_n[1] - t2_n[1]
-            # print(self.df.loc[t1[0]])
-            # print('dist_h_t1_t2_n :', dist_h_t1_t2_n)
-            # print('dist_h_t2_t4_n :', dist_h_t2_t4_n)
-            # if dist_h_t1_t2_n * 0.8 > dist_h_t2_t4_n:
-            #     continue
+
             up_model_candidates.append(
                 UpExpModel(self.df, t1, t2, t3, t4, CP, LT, LC, t2_1, parallel)
             )

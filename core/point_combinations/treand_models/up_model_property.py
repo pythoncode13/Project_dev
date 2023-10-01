@@ -1,5 +1,6 @@
 from core.model_utilities.distance import Distance
 from core.model_utilities.line import Line
+from core.model_utilities.point import Point
 
 
 class UpModelProperty:
@@ -16,6 +17,8 @@ class UpModelProperty:
         self._dist_cp_t4_x1 = None
         self._dist_cp_t4_x2 = None
         self._CP_to_t1 = None
+        self._LT_break_point = None
+        self._target_1 = None
 
     """Расстояние по оси x"""
     @property
@@ -49,9 +52,28 @@ class UpModelProperty:
     def up_take_200(self):
         return self.t4[1] + (self.t4[1] - self.t1[1]) * 2
 
+    @property
+    def LT_break_point(self):
+        self._LT_break_point = Point.find_LT_break_point(self.df,
+                                                      self.t4,
+                                                      self.dist_cp_t4_x2,
+                                                      self.LT.slope,
+                                                      self.LT.intercept,
+                                                      'up_model'
+                                                      )
+        return self._LT_break_point
+
+    @property
+    def target_1(self):
+        if self.LT_break_point:
+            dist_t4_lt_break = self.t4[1] - float(self.LT_break_point[1])
+            self._target_1 = float(self.LT_break_point[1]) - dist_t4_lt_break
+        return self._target_1
+
 
 class ModelPlot:
     def __init__(self, parent_model, start_index):
+
         self.t1 = (
             int(parent_model.t1[0]) - start_index, parent_model.t1[1])
         self.t2 = (
@@ -63,19 +85,17 @@ class ModelPlot:
         self.CP = (
             int(parent_model.CP[0]) - start_index, parent_model.CP[1])
         self.properties = parent_model.properties
-        self.lt, self.lc = self.lt_lc_for_plot()
 
-    def lt_lc_for_plot(self):
-        """Пересчет координат линий
-        для более удобного отображения на графике."""
+        self.parent_model_LT_break_point = parent_model.properties.LT_break_point
+        self.start_index = start_index
+        self._LT_break_point = None
 
-        # Задаем правую границу прямой
-        right_edge_index_lc = (self.t4[0] * 2)
-        right_edge_index_lt = (right_edge_index_lc
-                               + (self.t4[0] - self.t3[0])
-                               )
-        # Пересчитываем значения прямых
-        lt = Line.calculate_1(self.CP, self.t3, right_edge_index_lt)
-        lc = Line.calculate_1(self.CP, self.t4, right_edge_index_lc)
+        self.lt, self.lc = Line.lt_lc_for_plot(self.CP, self.t3, self.t4)
 
-        return lt, lc
+    @property
+    def LT_break_point(self):
+        if self.parent_model_LT_break_point:
+            self._LT_break_point = (
+                self.parent_model_LT_break_point[0] - self.start_index,
+                self.parent_model_LT_break_point[1])
+        return self._LT_break_point

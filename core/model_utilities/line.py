@@ -429,3 +429,18 @@ class Line:
         theta_deg = np.round(theta_deg, 1)
 
         return theta_deg
+    @staticmethod
+    def lt_lc_for_plot(CP, t3, t4):
+        """Пересчет координат линий
+        для более удобного отображения на графике."""
+
+        # Задаем правую границу прямой
+        right_edge_index_lc = (t4[0] * 2)
+        right_edge_index_lt = (right_edge_index_lc
+                               + (t4[0] - t3[0])
+                               )
+        # Пересчитываем значения прямых
+        lt = Line.calculate_1(CP, t3, right_edge_index_lt)
+        lc = Line.calculate_1(CP, t4, right_edge_index_lc)
+
+        return lt, lc
