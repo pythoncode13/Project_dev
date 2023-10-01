@@ -64,7 +64,7 @@ class TwoModel:
                 # т3 над ЛТ_ап
                 # Вычисляем значение на прямой up.LT в точке x_t3
                 y_LT = up.LT.slope * Decimal(down.t3[0]) + up.LT.intercept
-                print(y_LT)
+
 
                 # Проверяем, находится ли точка выше прямой
                 if down.t3[1] < y_LT:
@@ -81,12 +81,15 @@ class TwoModel:
                 # т2 над ЛТ_ап
                 # Вычисляем значение на прямой up.LT в точке x_t2
                 y_LT = up.LT.slope * Decimal(down.t2[0]) + up.LT.intercept
-                print(y_LT)
+
 
                 # Проверяем, находится ли точка выше прямой
                 if down.t2[1] < y_LT:
                     continue
 
+                # if down.CP[0] > up.t1[0]:
+                #     continue
+                #
                 # if not up.properties.target_1:
                 #     continue
                 # if down.t4[1] > up.properties.target_1:

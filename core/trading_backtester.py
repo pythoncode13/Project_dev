@@ -5,6 +5,8 @@ from collections import namedtuple
 import config
 from core.candle_plot import CandleStickPlotter
 from core.position_evaluator_new import PositionEvaluator
+import matplotlib.pyplot as plt
+from core.model_utilities.point import Point
 
 # Named tuple для удобства хранения параметров торговли
 TradeParameters = namedtuple(
@@ -142,22 +144,34 @@ class StrategySimulator:
         plot = CandleStickPlotter(sub_df_for_plot)
         plot.add_candlesticks()
         # Вызываем функцию отрисовки
+        LT_intersect = None
         plot.add_trade_elements(
             sub_df_for_plot, model.plot,
             (
                 params.ticker, entry_index_plot, params.entry_price,
                 params.stop_price, params.take_price, close_point_plot
-            )
+            ),
+            LT_intersect
         )
         if model2:
+            LT_intersect = Point.find_intersect_two_line_point(
+                model.LT.intercept,
+                model.LT.slope,
+                model2.LT.intercept,
+                model2.LT.slope
+            )
+            LT_intersect = (float(LT_intersect[0]) - start_index, LT_intersect[1])
+            print(LT_intersect)
             model2.initialize_plot(start_index)
             plot.add_trade_elements(
             sub_df_for_plot, model2.plot,
             (
                 params.ticker, entry_index_plot, params.entry_price,
                 params.stop_price, params.take_price, close_point_plot
+                ),
+                LT_intersect
             )
-        )
+
 
         # plot.save(f"{config.IMAGES_DIR}"
         #           f"{params.ticker}-"

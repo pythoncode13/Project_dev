@@ -217,7 +217,7 @@ class CandleStickPlotter:
                          horizontalalignment='left',
                          color='black', fontsize=30)
 
-    def add_trade_elements(self, sub_df_for_plot, model, trade_plot) -> None:
+    def add_trade_elements(self, sub_df_for_plot, model, trade_plot, LT_intersect) -> None:
         """Добавляем рисуем модель и торговые уровни в рамках одного трейда."""
 
         trade = PlotParameters(*trade_plot)
@@ -238,6 +238,17 @@ class CandleStickPlotter:
         xmin = 0  # начальный индекс дф (если индекс сброшен)
         xmax = len(sub_df_for_plot) - 1  # последний индекс дф
         self.add_trade_lines(model, trade, xmin, xmax)
+
+        if LT_intersect is not None:
+            # Рисуем уровень
+            plt.vlines(
+                ymin=trade.stop_price,
+                ymax=trade.entry_price,
+                x=LT_intersect[0],
+                colors='blue',
+                linestyles='solid',
+                linewidth=1,
+            )
 
     def show(self) -> None:
         """Показать график."""
