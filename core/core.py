@@ -18,8 +18,11 @@ from other_modules.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
 
 from core.trading.trading_one_exp_model_long import trade_one_exp_model_long
+from core.trading.trading_two_exp_model_long import trade_two_exp_model_long
 
 from core.point_combinations.treand_models.up_trend_model import UpTrendModel
+from core.point_combinations.treand_models.down_trend_model import DownTrendModel
+
 from other_modules.clear_directory import clear_directory
 
 
@@ -75,15 +78,26 @@ class Worker:
 
         # Получаем модели-кандидаты для дальнейшего анализа
         candidates_up = UpTrendModel(df).find_candidates()
+        candidates_down = DownTrendModel(df).find_candidates()
+
         # Отправляем модели-кандидаты в модуль торговли
         # Торговля одной модели расширения, лонг
-        trade_one_exp_model_long(
-                                 candidates_up,
-                                 self.ticker,
-                                 self.timeframe,
-                                 self.s_date,
-                                 self.u_date
-                                 )
+        # trade_one_exp_model_long(
+        #                          candidates_up,
+        #                          self.ticker,
+        #                          self.timeframe,
+        #                          self.s_date,
+        #                          self.u_date
+        #                          )
+
+        trade_two_exp_model_long(
+            candidates_up,
+            candidates_down,
+            self.ticker,
+            self.timeframe,
+            self.s_date,
+            self.u_date
+        )
 
         if self.images:
             s_date_date_only = self.s_date.split()[0]

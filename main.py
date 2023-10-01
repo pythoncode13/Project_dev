@@ -11,10 +11,10 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=np.RankWarning)
 
-DEV = False
+DEV = True
 
 # Включаем(True)/Выключаем(False) планировщик
-ENABLE_SCHEDULER = True
+ENABLE_SCHEDULER = False
 
 
 def start():
@@ -22,18 +22,18 @@ def start():
     AppInitializer()
 
     if DEV:
-        # tickers = [
-        #     'WLDUSDT'
-        # ]
-        tickers = config.tickers
+        tickers = [
+            'BTCUSDT'
+        ]
+        # tickers = config.tickers
         timeframes = ['30MINUTE']
 
         s_date = "2023-01-01 00:00:00"
         u_date = "2023-09-30 10:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
-                             images=True,
-                             debug=False,
+                             images=False,
+                             debug=True,
                              show_progress_bar=False,
                              telegram=False
                              )
