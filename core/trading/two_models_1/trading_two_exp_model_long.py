@@ -1,16 +1,12 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-
-from core.models_trade_property.base_trade_analysis_long import \
-    BaseTradeAnalysis
 
 from other_modules.timing_decorator import timing_decorator
 from core.point_combinations.treand_models.advanced_model_propetry import AdvancedModelProperty
 from core.model_utilities.point import Point
 from core.trading_backtester import StrategySimulator
 from utils.excel_saver import ExcelSaver
-from core.point_combinations.two_models.two_models import TwoModel
+from core.trading.two_models_1.two_models import TwoModel
 
 
 @timing_decorator
