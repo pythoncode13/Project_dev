@@ -1,2 +1,32 @@
 срзнач 0.79
 винрейт 0.58
+
+# if LT_intersect is not None:
+#     # Рисуем уровень
+#     plt.vlines(
+#         ymin=trade.stop_price,
+#         ymax=trade.entry_price,
+#         x=LT_intersect[0],
+#         colors='blue',
+#         linestyles='solid',
+#         linewidth=1,
+#     )
+
+    if model2:
+# LT_intersect = Point.find_intersect_two_line_point(
+#     model.LT.intercept,
+#     model.LT.slope,
+#     model2.LT.intercept,
+#     model2.LT.slope
+# )
+# LT_intersect = (float(LT_intersect[0]) - start_index, LT_intersect[1])
+# print(LT_intersect)
+model2.initialize_plot(start_index)
+plot.add_trade_elements(
+sub_df_for_plot, model2.plot,
+(
+    params.ticker, entry_index_plot, params.entry_price,
+    params.stop_price, params.take_price, close_point_plot
+    ),
+    # LT_intersect
+)
