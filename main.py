@@ -22,10 +22,10 @@ def start():
     AppInitializer()
 
     if DEV:
-        tickers = [
-            'BTCUSDT'
-        ]
-        # tickers = config.tickers
+        # tickers = [
+        #     'BTCUSDT'
+        # ]
+        tickers = config.tickers
         timeframes = ['30MINUTE']
 
         s_date = "2023-01-01 00:00:00"
@@ -33,7 +33,7 @@ def start():
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
-                             debug=True,
+                             debug=False,
                              show_progress_bar=True,
                              telegram=False
                              )

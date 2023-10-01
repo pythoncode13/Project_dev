@@ -59,10 +59,10 @@ class TwoModel:
                 #     continue
                 # Определяем интервал в UpExpModel
                 interval_start = up.t4[0]
-                # interval_end = up_LT_break_point_x
+                interval_end = up.properties.dist_cp_t4_x1
 
                 # Проверяем, попадают ли точки из DownExpModel в этот интервал
-                in_interval_t1 = interval_start <= down.t1[0] <= interval_start
+                in_interval_t1 = interval_start <= down.t1[0] <= interval_end
                 # in_interval_t3 = interval_start <= down.t3[0] <= interval_end
 
                 # after_interval_t4 = down.t4[0] >= interval_end

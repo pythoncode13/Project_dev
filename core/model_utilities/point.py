@@ -53,24 +53,51 @@ class Point:
 
         return first_bar_by_price
 
+    # @staticmethod
+    # def find_LT_break_point_close(df, t4up, index, slope, intercept):
+    #     """Находит точку достижения ЛТ "клоусом" бара."""
+    #     LT_break_point = None
+    #     # Получаем все бары между t3up[0]+1 и t4up[0]-1
+    #     close = df.loc[t4up[0]:index, 'close']
+    #     # Вычисляем, какие бары пересекают линию
+    #     intersects = close < (slope * close.index + intercept)
+    #     # Если есть пересечения
+    #     if intersects.any():
+    #         # Выбираем индексы пересечений
+    #         intersect_indices = close[intersects].index
+    #         if not intersect_indices.empty:
+    #             # Возвращает выбранный бар, пересекающий линию
+    #             LT_break_point = intersect_indices[0]
+    #             return (LT_break_point, slope * LT_break_point + intercept)
+    #         else:
+    #             return None
     @staticmethod
-    def find_LT_break_point_close(df, t4up, index, slope, intercept):
+    def find_LT_break_point_close(df, t4, index, slope, intercept, direction='up_model'):
         """Находит точку достижения ЛТ "клоусом" бара."""
+
         LT_break_point = None
-        # Получаем все бары между t3up[0]+1 и t4up[0]-1
-        close = df.loc[t4up[0]:index, 'close']
+
+        # Выбираем столбец и направление сравнения в зависимости от направления
+        price_column = 'close'
+        comparison_operator = np.less if direction == 'up_model' else np.greater
+
+        # Получаем все бары между t4[0] и index
+        prices = df.loc[t4[0]:index, price_column]
+
         # Вычисляем, какие бары пересекают линию
-        intersects = close < (slope * close.index + intercept)
+        intersects = comparison_operator(prices,
+                                         slope * prices.index + intercept)
+
         # Если есть пересечения
         if intersects.any():
             # Выбираем индексы пересечений
-            intersect_indices = close[intersects].index
+            intersect_indices = prices[intersects].index
             if not intersect_indices.empty:
                 # Возвращает выбранный бар, пересекающий линию
                 LT_break_point = intersect_indices[0]
                 return (LT_break_point, slope * LT_break_point + intercept)
-            else:
-                return None
+        else:
+            return None
 
     @staticmethod
     def find_LT_break_point(df, t4, index, slope, intercept, direction='up_model'):

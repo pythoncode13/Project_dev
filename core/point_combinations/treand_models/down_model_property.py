@@ -18,6 +18,7 @@ class DownModelProperty:
         self._dist_cp_t4_x2 = None
         self._CP_to_t1 = None
         self._LT_break_point = None
+        # self._LT_break_point_close = None
         self._target_1 = None
         self._target_3 = None
         self._target_5 = None
@@ -63,6 +64,17 @@ class DownModelProperty:
                                                          'down_model'
                                                          )
         return self._LT_break_point
+
+    # @property
+    # def LT_break_point_close(self):
+    #     self._LT_break_point_close = Point.find_LT_break_point_close(
+    #                                                      self.df,
+    #                                                      self.t4,
+    #                                                      self.dist_cp_t4_x2,
+    #                                                      self.LT.slope,
+    #                                                      self.LT.intercept
+    #                                                      )
+    #     return self._LT_break_point_close
 
     @property
     def target_1(self):
