@@ -101,7 +101,7 @@ class StrategySimulator:
             )
 
             # Отрисовываем сделку
-            self.plot_trade(close_point, params, model, model2)
+            # self.plot_trade(close_point, params, model, model2)
 
         return all_other_parameters_up
 
