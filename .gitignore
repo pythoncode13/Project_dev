@@ -4,3 +4,5 @@
 /bigdata/
 /data/
 /ml/wandb/
+/other_modules/telegram/data.csv
+/other_modules/telegram/order_in_process_data.csv
