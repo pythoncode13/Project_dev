@@ -164,20 +164,55 @@ class CandleStickPlotter:
             self.ax.plot(trade.close_point[0], trade.close_point[1],
                          marker='^', color='k', markersize=10)
 
-        # Если есть пробой ЛТ - рисуем таргет
+        # Если есть пробой ЛТ - рисуем таргеты
+        # Таргет 1
         if model.properties.target_1:
             print(model.properties.target_1)
             # Прямая
             self.ax.hlines(
                 y=model.properties.target_1,
                 xmin=model.LT_break_point[0],
-                xmax=xmax,
+                xmax=model.LT_break_point[0]+30,
                 colors='black',
                 linestyles='solid',
                 linewidth=1,
             )
             # Надпись
             self.ax.text(model.LT_break_point[0]+5, model.properties.target_1, 'Target 1',
+                         verticalalignment='bottom',
+                         horizontalalignment='left',
+                         color='black', fontsize=30)
+
+            # Таргет 3
+            # Прямая
+            self.ax.hlines(
+                y=model.properties.target_3,
+                xmin=model.LT_break_point[0],
+                xmax=model.LT_break_point[0]+30,
+                colors='black',
+                linestyles='solid',
+                linewidth=1,
+            )
+            # Надпись
+            self.ax.text(model.LT_break_point[0] + 5,
+                         model.properties.target_3, 'Target 3',
+                         verticalalignment='bottom',
+                         horizontalalignment='left',
+                         color='black', fontsize=30)
+
+            # Таргет 5
+            # Прямая
+            self.ax.hlines(
+                y=model.properties.target_5,
+                xmin=model.LT_break_point[0],
+                xmax=model.LT_break_point[0]+30,
+                colors='black',
+                linestyles='solid',
+                linewidth=1,
+            )
+            # Надпись
+            self.ax.text(model.LT_break_point[0] + 5,
+                         model.properties.target_5, 'Target 5',
                          verticalalignment='bottom',
                          horizontalalignment='left',
                          color='black', fontsize=30)

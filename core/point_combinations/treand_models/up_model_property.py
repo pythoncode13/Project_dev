@@ -19,6 +19,8 @@ class UpModelProperty:
         self._CP_to_t1 = None
         self._LT_break_point = None
         self._target_1 = None
+        self._target_3 = None
+        self._target_5 = None
 
     """Расстояние по оси x"""
     @property
@@ -66,9 +68,30 @@ class UpModelProperty:
     @property
     def target_1(self):
         if self.LT_break_point:
-            dist_t4_lt_break = self.t4[1] - float(self.LT_break_point[1])
+            max_price = self.df['high'].iloc[
+                        int(self.t4[0]):int(self.LT_break_point[0])
+                        ].max()
+            dist_t4_lt_break = max_price - float(self.LT_break_point[1])
             self._target_1 = float(self.LT_break_point[1]) - dist_t4_lt_break
         return self._target_1
+
+    @property
+    def target_3(self):
+        if self.LT_break_point:
+            high_t4_t1 = self.t4[1] - self.t1[1]
+            self._target_3 = float(self.LT_break_point[1]) - high_t4_t1
+        return self._target_3
+
+    @property
+    def target_5(self):
+        if self.LT_break_point:
+            max_price = self.df['high'].iloc[
+                        int(self.t4[0]):int(self.LT_break_point[0])
+                        ].max()
+            print(max_price)
+            dist_t4_lt_break = max_price - float(self.CP[1])
+            self._target_5 = float(self.CP[1]) - dist_t4_lt_break
+        return self._target_5
 
 
 class ModelPlot:
