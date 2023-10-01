@@ -79,7 +79,9 @@ class UpModelProperty:
     def target_3(self):
         if self.LT_break_point:
             high_t4_t1 = self.t4[1] - self.t1[1]
-            self._target_3 = float(self.LT_break_point[1]) - high_t4_t1
+            # self._target_3 = float(self.LT_break_point[1]) - high_t4_t1
+            self._target_3 = self.t1[1] - high_t4_t1
+
         return self._target_3
 
     @property

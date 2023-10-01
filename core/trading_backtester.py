@@ -102,10 +102,16 @@ class StrategySimulator:
 
             # Отрисовываем сделку
             # self.plot_trade(close_point, params, model, model2)
+            if close_position_price is not None:
+                if profit_or_lose == 0:
+                    self.plot_trade(close_point, params, model, model2, 'stop')
 
+                else:
+                    self.plot_trade(close_point, params, model, model2,
+                                                 'take')
         return all_other_parameters_up
 
-    def plot_trade(self, close_point, params, model, model2):
+    def plot_trade(self, close_point, params, model, model2, direction):
         """
         Отрисовка результатов сделки.
 
@@ -153,6 +159,19 @@ class StrategySimulator:
             )
         )
 
-        plot.save(f"{config.IMAGES_DIR}"
-                  f"{params.ticker}-"
-                  f"{params.entry_date}.png")
+        # plot.save(f"{config.IMAGES_DIR}"
+        #           f"{params.ticker}-"
+        #           f"{params.entry_date}.png")
+
+        if direction == 'stop':
+            plot.save(
+                    f'{config.IMAGES_DIR}'
+                    f'STOP_{params.ticker}-'
+                    f'{params.entry_date}.png'
+                    )
+        else:
+            plot.save(
+                    f'{config.IMAGES_DIR}'
+                    f'TAKE_{params.ticker}-'
+                    f'{params.entry_date}.png'
+                    )

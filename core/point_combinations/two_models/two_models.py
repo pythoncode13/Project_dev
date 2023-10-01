@@ -57,8 +57,8 @@ class TwoModel:
                 # if down.CP[0] > up.t1[0]:
                 #     continue
                 # Определяем интервал в UpExpModel
-                interval_start = up.t4[0]
-                interval_end = up.properties.dist_cp_t4_x1
+                interval_start = up.t4[0]-1
+                interval_end = up.t4[0]+1
 
                 # Проверяем, попадают ли точки из DownExpModel в этот интервал
                 in_interval_t1 = interval_start <= down.t1[0] <= interval_end
@@ -71,10 +71,11 @@ class TwoModel:
 
                 if not in_interval_t1:
                     continue
-                if not up.properties.target_1:
-                    continue
-                if down.t4[1] > up.properties.target_1:
-                    continue
+
+                # if not up.properties.target_1:
+                #     continue
+                # if down.t4[1] > up.properties.target_1:
+                #     continue
                 #     up_dist_t4_lt_break = up.t4[1] - float(up_LT_break_point[1])
                 #     up_target_1 = float(up_LT_break_point[1]) - up_dist_t4_lt_break
                 #     if up_target_1 >= (

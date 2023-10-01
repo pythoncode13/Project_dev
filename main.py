@@ -23,7 +23,7 @@ def start():
 
     if DEV:
         # tickers = [
-        #     'BTCUSDT'
+        #     'ETHUSDT'
         # ]
         tickers = config.tickers
         timeframes = ['30MINUTE']
@@ -33,7 +33,7 @@ def start():
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
-                             debug=False,
+                             debug=True,
                              show_progress_bar=True,
                              telegram=False
                              )

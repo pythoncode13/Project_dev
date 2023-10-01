@@ -35,6 +35,8 @@ def prepare_trading_setup(super_groups, ticker):
                                                         )
         if not down_LT_break_point:
             continue
+        # if (down.properties.target_1 > down.properties.target_3):
+        #     continue
         # plt.plot(down_LT_break_point[0], down_LT_break_point[1],
         #          marker='o', color='r', markersize=10)
         #
