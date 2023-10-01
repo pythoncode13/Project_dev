@@ -5,6 +5,10 @@ import matplotlib.pyplot as ax
 from core.model_utilities.line import Line
 from core.model_utilities.point import Point
 
+from decimal import Decimal, getcontext
+
+getcontext().prec = 10
+
 
 class TwoModel:
     def __init__(self, up_model: UpExpModel, down_model: DownExpModel):
@@ -43,16 +47,6 @@ class TwoModel:
         colors_up = {'t1': 'k', 't2': 'k', 't3': 'k', 't4': 'g'}
         colors_down = {'t1': 'r', 't2': 'r', 't3': 'r', 't4': 'b'}
         for up in up_models:
-            # up_LT_break_point = Point.find_LT_break_point(up.df,
-            #                           up.t4,
-            #                           up.properties.dist_cp_t4_x1,
-            #                           up.LT.slope,
-            #                           up.LT.intercept,
-            #                           'up_model'
-            #                           )
-            # if up_LT_break_point is None:
-            #     continue
-            # up_LT_break_point_x = int(up_LT_break_point[0])
             for down in down_models:
                 # if down.CP[0] > up.t1[0]:
                 #     continue
@@ -61,15 +55,36 @@ class TwoModel:
                 interval_end = up.t4[0]+1
 
                 # Проверяем, попадают ли точки из DownExpModel в этот интервал
+                # Точка т1 довн == т4 ап
                 in_interval_t1 = interval_start <= down.t1[0] <= interval_end
-                # in_interval_t3 = interval_start <= down.t3[0] <= interval_end
-
-                # after_interval_t4 = down.t4[0] >= interval_end
-
-                # if down.CP[0] > up.t4[0]:
-                #     continue
 
                 if not in_interval_t1:
+                    continue
+
+                # т3 над ЛТ_ап
+                # Вычисляем значение на прямой up.LT в точке x_t3
+                y_LT = up.LT.slope * Decimal(down.t3[0]) + up.LT.intercept
+                print(y_LT)
+
+                # Проверяем, находится ли точка выше прямой
+                if down.t3[1] < y_LT:
+                    continue
+
+                # т4 под ЛТ_ап
+                # Вычисляем значение на прямой up.LT в точке x_t3
+                y_LT = up.LT.slope * Decimal(down.t4[0]) + up.LT.intercept
+
+                # Проверяем, находится ли точка выше прямой
+                if down.t4[1] > y_LT:
+                    continue
+
+                # т2 над ЛТ_ап
+                # Вычисляем значение на прямой up.LT в точке x_t2
+                y_LT = up.LT.slope * Decimal(down.t2[0]) + up.LT.intercept
+                print(y_LT)
+
+                # Проверяем, находится ли точка выше прямой
+                if down.t2[1] < y_LT:
                     continue
 
                 # if not up.properties.target_1:
@@ -97,3 +112,20 @@ class TwoModel:
                 super_groups.append(TwoModel(up, down))
 
         return super_groups
+# up_LT_break_point = Point.find_LT_break_point(up.df,
+#                           up.t4,
+#                           up.properties.dist_cp_t4_x1,
+#                           up.LT.slope,
+#                           up.LT.intercept,
+#                           'up_model'
+#                           )
+# if up_LT_break_point is None:
+#     continue
+# up_LT_break_point_x = int(up_LT_break_point[0])
+
+# in_interval_t3 = interval_start <= down.t3[0] <= interval_end
+
+                # after_interval_t4 = down.t4[0] >= interval_end
+
+                # if down.CP[0] > up.t4[0]:
+                #     continue

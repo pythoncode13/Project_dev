@@ -6,7 +6,7 @@ from core.point_combinations.treand_models.advanced_model_propetry import Advanc
 from core.model_utilities.point import Point
 from core.trading_backtester import StrategySimulator
 from utils.excel_saver import ExcelSaver
-from core.trading.two_models_1.two_models import TwoModel
+from core.trading.two_models_2.two_models import TwoModel
 
 
 @timing_decorator
