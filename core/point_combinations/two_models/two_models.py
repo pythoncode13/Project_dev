@@ -53,7 +53,6 @@ class TwoModel:
             # if up_LT_break_point is None:
             #     continue
             # up_LT_break_point_x = int(up_LT_break_point[0])
-
             for down in down_models:
                 # if down.CP[0] > up.t1[0]:
                 #     continue
@@ -71,6 +70,10 @@ class TwoModel:
                 #     continue
 
                 if not in_interval_t1:
+                    continue
+                if not up.properties.target_1:
+                    continue
+                if down.t4[1] > up.properties.target_1:
                     continue
                 #     up_dist_t4_lt_break = up.t4[1] - float(up_LT_break_point[1])
                 #     up_target_1 = float(up_LT_break_point[1]) - up_dist_t4_lt_break
