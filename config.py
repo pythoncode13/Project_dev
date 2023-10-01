@@ -248,4 +248,4 @@ IMAGES_DIR = './data/images/'
 BIGDATA_DIR = './data/bigdata/'
 
 UTILS_DIR = './utils/'
-TELEGRAM_DIR = 'other_modules/telegram/'
+TELEGRAM_DIR = 'other_modules/telegram/data/'
