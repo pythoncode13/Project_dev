@@ -28,7 +28,7 @@ def start():
         tickers = config.tickers
         timeframes = ['30MINUTE']
 
-        s_date = "2023-01-01 00:00:00"
+        s_date = "2023-06-01 00:00:00"
         u_date = "2023-09-30 10:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
