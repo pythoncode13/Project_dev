@@ -22,16 +22,51 @@ def prepare_trading_setup(super_groups, ticker):
         t2up = up.t2
         t3up = up.t3
         t4up = up.t4
-        down_LT_break_point = Point.find_LT_break_point_close(down.df,
-                                                        down.t4,
-                                                        down.properties.dist_cp_t4_x1,
-                                                        down.LT.slope,
-                                                        down.LT.intercept,
-                                                        'down_model'
-                                                        )
-        if not down_LT_break_point:
+        """Проверяем, что работаем с пентаграммой."""
+        if down.CP[0] > up.t1[0]:
+            continue
+        """ 
+        Проверяем, является ли 1 модель (ап) моделью по тренду.
+        Если да, тогда продолжаем цикл.
+        """
+        # т1ап - не мин лоу на участке ст-4х2 влево
+        dist_cp_t4_up = int(up.t4[0]) - int(up.CP[0])
+        dist_cp_t4_x2_up_left = int(up.CP[0]) - dist_cp_t4_up * 2
+        # Получаем все лоу на участке dist_cp_t4_x2_up_left:up.t1[0] - 1
+        low_values = up.df.loc[dist_cp_t4_x2_up_left:up.t1[0] - 1]['low']
+
+        # Пропустить цикл, если все лоу выше или равны up.t1[1]
+        if all(low > up.t1[1] for low in low_values):
+            continue
+        # Получаем все хай на участке dist_cp_t4_x2_up_left:down.t1[0] - 1
+        high_values = up.df.loc[dist_cp_t4_x2_up_left:down.t1[0] - 1]['high']
+
+        # Пропустить цикл, если есть хоть один хай выше или равны down.t1[1]
+        if any(high >= down.t1[1] for high in high_values):
             continue
 
+        plt.plot(up.t1[0], up.t1[1],
+                 marker='^', color='b', markersize=10)
+        plt.plot(down.t1[0], down.t1[1],
+                 marker='^', color='r', markersize=10)
+        # down_LT_break_point = Point.find_line_break_point_close(down.df,
+        #                                                 down.t4[0],
+        #                                                 down.properties.dist_cp_t4_x1,
+        #                                                 down.LT.slope,
+        #                                                 down.LT.intercept,
+        #                                                 'above'
+        #                                                 )
+        # if not down_LT_break_point:
+        #     continue
+        up_LT_break_point = Point.find_line_break_point_close(up.df,
+                                                        up.t4[0],
+                                                        up.properties.dist_cp_t4_x1,
+                                                        up.LT.slope,
+                                                        up.LT.intercept,
+                                                        'belive'
+                                                        )
+        if not up_LT_break_point:
+            continue
         # LT_intersect = Point.find_intersect_two_line_point(
         #     up.LT.intercept,
         #     up.LT.slope,
@@ -41,8 +76,8 @@ def prepare_trading_setup(super_groups, ticker):
 
         # if (down.properties.target_1 > down.properties.target_3):
         #     continue
-        # plt.plot(down_LT_break_point[0], down_LT_break_point[1],
-        #          marker='o', color='r', markersize=10)
+        plt.plot(up_LT_break_point[0], up_LT_break_point[1],
+                 marker='o', color='r', markersize=10)
         #
         """------------- часть про активацию модели ------------"""
 
@@ -50,13 +85,13 @@ def prepare_trading_setup(super_groups, ticker):
         lower_body_edge = up.df['close']
 
         # Задаем диапазон поиска
-        lower_limit = int(down_LT_break_point[0]) + 1
+        lower_limit = int(up_LT_break_point[0]) + 1
         upper_limit = min(up.properties.dist_cp_t4_x2, len(up.df))
 
         # Находим индексы всех баров в нашем диапазоне,
         # нижний край которых закрылся выше уровня up.up_take_lines[1]
         bars_above_t4up = np.where(
-            lower_body_edge[int(lower_limit):int(upper_limit)] > t4up[1])
+            lower_body_edge[int(lower_limit):int(upper_limit)] < down.t4[1])
 
         # Если таких баров нет, bars_above_t4up будет пустым
         # и мы пропускаем этот шаг цикла
@@ -84,12 +119,12 @@ def prepare_trading_setup(super_groups, ticker):
 
         entry_price = sliced_df.loc[entry_index, 'close']
 
-        stop_price = down.t4[1]
+        stop_price = up.t4[1]
         plt.plot(entry_index, entry_price,
                  marker='^', color='r', markersize=10)
 
-        take_price = t4up[1] + 0.9 * (
-                up.properties.up_take_100 - t4up[1])
+        take_price = down.t4[1] - 0.9 * (
+                down.t4[1] - down.properties.up_take_200)
         # take_price = down.properties.target_3
         # take_price = entry_price + 0.9 * (
         #         down.properties.target_1 - entry_price)
@@ -111,7 +146,7 @@ def prepare_trading_setup(super_groups, ticker):
 
         stop_percent_difference = 100 - stop_price * 100 / entry_price
 
-        take_percent_difference = take_price * 100 / entry_price - 100
+        take_percent_difference = (take_price * 100 / entry_price - 100) * -1
 
         if take_percent_difference < 1:
             continue
@@ -159,11 +194,11 @@ def trade_two_exp_model_long(candidates_up,
     setup_parameters = prepare_trading_setup(super_groups, ticker)
     # Торгуем выбранные пары
     all_other_parameters_up = StrategySimulator(
-        'long').trade_process(setup_parameters)
+        'short').trade_process(setup_parameters)
     # Сохраняем результаты
     ExcelSaver(
         ticker,
-        'long',
+        'short',
         timeframe,
         s_date,
         u_date,

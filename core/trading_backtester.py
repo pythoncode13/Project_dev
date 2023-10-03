@@ -67,7 +67,7 @@ class StrategySimulator:
             # Срез данных для анализа
             sub_df = model.df.iloc[
                 params.entry_index: min(
-                    params.entry_index + 101, len(model.df)
+                    params.entry_index + 201, len(model.df)
                 )
             ].copy()
             sub_df['dateTime'] = pd.to_datetime(sub_df['dateTime'], format='%Y-%m-%d %H-%M-%S')
@@ -81,7 +81,7 @@ class StrategySimulator:
                 params.take_price,
                 params.stop_price,
                 self.position_type,
-                force_close_minutes=3000
+                force_close_minutes=6000
             ).evaluate()
 
             # Расчет результатов

@@ -127,23 +127,31 @@ class Point:
             return None
 
     @staticmethod
-    def find_above_line_point(df, start_index, end_index, slope, intercept, direction):
-        """Находит точку достижения ЛТ "хаем" бара."""
-        LC_break_point = None
-        # Получаем все бары между t3up[0]+1 и t4up[0]-1
-        high = df.loc[start_index:end_index, direction]
+    def find_line_break_point_close(df, index1, index2, slope, intercept,
+                                  direction='above'):
+        """Находит точку выше или ниже прямой "клоусом" бара."""
+
+        # Выбираем столбец и направление сравнения в зависимости от направления
+        price_column = 'close'
+        comparison_operator = np.greater if direction == 'above' else np.less
+
+        # Получаем все бары между t4[0] и index
+        prices = df.loc[index1:index2, price_column]
+
         # Вычисляем, какие бары пересекают линию
-        intersects = high > (slope * high.index + intercept)
+        intersects = comparison_operator(prices,
+                                         slope * prices.index + intercept)
+
         # Если есть пересечения
         if intersects.any():
             # Выбираем индексы пересечений
-            intersect_indices = high[intersects].index
+            intersect_indices = prices[intersects].index
             if not intersect_indices.empty:
                 # Возвращает выбранный бар, пересекающий линию
-                LC_break_point = intersect_indices[0]
-                return (LC_break_point, slope * LC_break_point + intercept)
-            else:
-                return None
+                line_break_point = intersect_indices[0]
+                return (line_break_point, slope * line_break_point + intercept)
+        else:
+            return None
 
     @staticmethod
     def find_t5(df, t2, t4, first_bar_by_price, direction='up_model'):

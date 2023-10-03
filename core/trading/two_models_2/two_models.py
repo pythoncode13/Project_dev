@@ -110,8 +110,8 @@ class TwoModel:
                     #     if down.t1[1] != max(high_values):
                     #         continue
 
-                # TwoModel.plot_model(up, colors_up)
-                # TwoModel.plot_model(down, colors_down)
+                TwoModel.plot_model(up, colors_up)
+                TwoModel.plot_model(down, colors_down)
                 super_groups.append(TwoModel(up, down))
 
         return super_groups
