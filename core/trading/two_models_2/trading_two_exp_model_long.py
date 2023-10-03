@@ -22,22 +22,22 @@ def prepare_trading_setup(super_groups, ticker):
         t2up = up.t2
         t3up = up.t3
         t4up = up.t4
-        # down_LT_break_point = Point.find_LT_break_point_close(down.df,
-        #                                                 down.t4,
-        #                                                 down.properties.dist_cp_t4_x1,
-        #                                                 down.LT.slope,
-        #                                                 down.LT.intercept,
-        #                                                 'down_model'
-        #                                                 )
-        # if not down_LT_break_point:
-        #     continue
+        down_LT_break_point = Point.find_LT_break_point_close(down.df,
+                                                        down.t4,
+                                                        down.properties.dist_cp_t4_x1,
+                                                        down.LT.slope,
+                                                        down.LT.intercept,
+                                                        'down_model'
+                                                        )
+        if not down_LT_break_point:
+            continue
 
-        LT_intersect = Point.find_intersect_two_line_point(
-            up.LT.intercept,
-            up.LT.slope,
-            down.LT.intercept,
-            down.LT.slope
-        )
+        # LT_intersect = Point.find_intersect_two_line_point(
+        #     up.LT.intercept,
+        #     up.LT.slope,
+        #     down.LT.intercept,
+        #     down.LT.slope
+        # )
 
         # if (down.properties.target_1 > down.properties.target_3):
         #     continue
@@ -50,7 +50,7 @@ def prepare_trading_setup(super_groups, ticker):
         lower_body_edge = up.df['close']
 
         # Задаем диапазон поиска
-        lower_limit = int(LT_intersect[0]) + 1
+        lower_limit = int(down_LT_break_point[0]) + 1
         upper_limit = min(up.properties.dist_cp_t4_x2, len(up.df))
 
         # Находим индексы всех баров в нашем диапазоне,
