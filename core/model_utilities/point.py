@@ -24,7 +24,7 @@ class Point:
         return x_intersect_LC_LT_point, y_intersect_LC_LT_point
 
     @staticmethod
-    def find_first_bar_by_price(df, target_price, point1, point2,
+    def find_first_bar_by_price(df, target_price, index1, index2,
                                 direction='above'):
         # Проверяем алиасы для направления
         if direction in ['above', 'up_model']:
@@ -39,7 +39,7 @@ class Point:
                 "'up_model', or 'down_model'.")
 
         # Создаем массив из выбранного столбца, начиная с индекса point1
-        prices = df.loc[point1:point2, price_column].values
+        prices = df.loc[index1:index2, price_column].values
         # Ищем индексы в зависимости от выбранного оператора сравнения
         target_price_indices = \
         np.where(comparison_operator(prices, target_price))[0]
@@ -47,7 +47,7 @@ class Point:
         if target_price_indices.size == 0:
             return None
         # Берем первый индекс, если есть хотя бы один
-        first_bar_by_target_price_index = target_price_indices[0] + int(point1)
+        first_bar_by_target_price_index = target_price_indices[0] + int(index1)
 
         first_bar_by_price = (first_bar_by_target_price_index, target_price)
 
@@ -171,12 +171,12 @@ class Point:
             return None
 
         t5 = (t5_index, t5_price)
-
-        # Проверяем t2 и t5 (эта часть не меняется)
-        if not Point.check_t2_t5(df, t2, t5, direction=direction):
-            return None
-        else:
-            return t5
+        return t5
+        # # Проверяем t2 и t5 (эта часть не меняется)
+        # if not Point.check_t2_t5(df, t2, t5, direction=direction):
+        #     return None
+        # else:
+        #     return t5
 
     @staticmethod
     def check_t2_t5(df, t2, t5, direction='up_model'):
