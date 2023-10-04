@@ -22,14 +22,14 @@ def start():
     AppInitializer()
 
     if DEV:
-        tickers = [
-            'OOKIUSDT'
-        ]
-        # tickers = config.tickers
+        # tickers = [
+        #     'CRVUSDT'
+        # ]
+        tickers = config.tickers
         timeframes = ['30MINUTE']
         # STOP_OOKIUSDT-2023-06-17 14-00-00
-        s_date = "2023-06-10 00:00:00"
-        u_date = "2023-06-20 00:00:00"
+        s_date = "2023-07-01 00:00:00"
+        u_date = "2023-09-15 00:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,

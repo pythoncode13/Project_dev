@@ -148,8 +148,16 @@ def prepare_trading_setup(super_groups, ticker):
         stop_percent_difference = 100 - stop_price * 100 / entry_price
 
         take_percent_difference = (take_price * 100 / entry_price - 100) * -1
-
-        if take_percent_difference < 1:
+        take_percent_difference1 = (down.properties.take_100 * 100 / entry_price - 100) * -1
+        # plt.hlines(
+        #     y=down.properties.take_100,
+        #     xmin=down.t1[0],
+        #     xmax=len(down.df),
+        #     colors='green',
+        #     linestyles='solid',
+        #     linewidth=1,
+        # )
+        if take_percent_difference1 < 1:
             continue
         # if take_percent_difference/stop_percent_difference < 0.9:
         #     continue

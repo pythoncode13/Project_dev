@@ -22,6 +22,13 @@ class StrategySimulator:
         self.stop_mode = stop_mode
         self.position_type = position_type
 
+    # Обобщенный расчет процента
+    @staticmethod
+    def calc_diff(price1, price2, entry_price):
+        price_diff = price2 - price1
+        return price_diff / entry_price * 100
+
+
     def trade_result(self, params, close_point, close_reason, first_take):
         """
         Расчет результатов торговли.
@@ -34,9 +41,9 @@ class StrategySimulator:
         if close_reason == 'Open':
             return None, None, None, None
 
-        if close_reason == 'Half':
+        if close_reason == 'Stop' or close_reason == 'Force':
             # Определяем переменную с ценой закрытия сделки
-            close_position_price = first_take[1]
+            close_position_price = close_point[1]
             # Считаем изменение цены в % между ценой входа
             # и закрытия сделки
             price_diff = close_position_price - params.entry_price
@@ -44,37 +51,45 @@ class StrategySimulator:
                 price_diff / params.entry_price * 100
                 if self.position_type == 'long'
                 else -price_diff / params.entry_price * 100
-            ) / 2
+            )
+
             return (
                 close_position_price,
                 diff,
                 int(diff > 0),  # profit_or_lose
                 close_point[0] - params.entry_index  # длительность сделки
-        )
-
-        # Определяем переменную с ценой закрытия сделки
-        close_position_price = close_point[1]
-        # Считаем изменение цены в % между ценой входа
-        # и закрытия сделки
-        price_diff = close_position_price - params.entry_price
-        diff = (
-            price_diff / params.entry_price * 100
-            if self.position_type == 'long'
-            else -price_diff / params.entry_price * 100
-        )
-
-        if close_reason == 'Full':
-            total_profit = diff + (
-                        diff / 2)  # 50% от первого тейка и 50% от второго
+            )
         else:
-            total_profit = diff
+            # Считаем изменение цены в % между ценой входа
+            # и частичным закрытием по первому тейку
 
-        return (
-                close_position_price,
-                total_profit,
-                int(diff > 0), #profit_or_lose
-                close_point[0] - params.entry_index # длительность сделки
-                )
+            price_diff_first_take = (first_take[1] - params.entry_price)
+
+            diff_first_take = (
+                                  price_diff_first_take / params.entry_price * 100
+                                  if self.position_type == 'long'
+                                  else -price_diff_first_take / params.entry_price * 100
+                              )
+
+            # Определяем переменную с ценой закрытия сделки
+            close_position_price = close_point[1]
+            # Считаем изменение цены в % между ценой входа
+            # и закрытия сделки
+            price_diff_close = (close_position_price - params.entry_price)
+
+            diff_close = (
+                             price_diff_close / params.entry_price * 100
+                             if self.position_type == 'long'
+                             else -price_diff_close / params.entry_price * 100
+                         )
+
+            total_profit = diff_first_take * 0.5 + diff_close * 0.5
+            return (
+                    close_position_price,
+                    total_profit,
+                    int(total_profit > 0), #profit_or_lose
+                    close_point[0] - params.entry_index # длительность сделки
+                    )
 
     def two_step_trade(self, sub_df, params, take1, take2):
         # Шаг 1. Определяем был ли достигнут первый тейк
@@ -87,14 +102,16 @@ class StrategySimulator:
             params.stop_price,
             self.stop_mode,
             self.position_type,
-            force_close_minutes=6000,
+            force_close_minutes=15000,
         ).evaluate()
-        print(close_position_step1, close_reason, close_point1)
+
         if not close_position_step1:
             return 'Open', None, None
 
         if close_position_step1 and close_reason == 'Stop':
             return 'Stop', None, close_point1
+        if close_position_step1 and close_reason == 'Force':
+            return 'Force', None, close_point1
             # вторая переменная - это промежуточная фиксация
             # позиция закрылась по стопы - промежуточной фиксации не произошло
         if close_position_step1 and close_reason == 'Take':
@@ -102,27 +119,30 @@ class StrategySimulator:
             # Срез и подготовка данных для анализа
             # Проводим виртуальную торговлю в PositionEvaluator
             # Обрезаем датафрейм с нужного момента времени
+
             start_index = close_point1[
-                              0] - 1 - params.entry_index  # Отнимаем entry_index, чтобы учесть начальный срез
-            end_index = min(start_index + 201,
-                            len(sub_df))  # Ограничиваем длину среза
+                              0] + 1 - params.entry_index  # Отнимаем entry_index, чтобы учесть начальный срез
+            end_index = len(sub_df)  # Ограничиваем длину среза
 
             new_sub_df = sub_df.iloc[start_index:end_index].copy()
-
+            stop_mode = 'strong'
             close_position_step2, close_reason, close_point2 = PositionEvaluator(
                 new_sub_df,
                 params.ticker,
                 params.entry_date,
                 take2,
                 params.entry_price,
-                stop_mode='strong',
-                position_type='short',
-                force_close_minutes=6000,
+                stop_mode,
+                self.position_type,
+                force_close_minutes=15000,
             ).evaluate()
+            print(close_position_step2, close_reason, close_point2)
             if close_position_step2 and close_reason == 'Take':
                 return 'Full', close_point1, close_point2
             if close_position_step2 and close_reason == 'Stop':
                 return 'Half', close_point1, close_point2
+            if close_position_step2 and close_reason == 'Force':
+                return 'Half_Force', close_point1, close_point2
 
             # print(
             #     f"Entry price: {params.entry_price}\n"
@@ -140,7 +160,6 @@ class StrategySimulator:
             #         ) / 2
             # print('diff: ', diff)
             # print(close_position, close_reason, close_point)
-
 
     def trade_process(self, all_base_setup_parameters):
         """
@@ -160,7 +179,7 @@ class StrategySimulator:
             # Срез и подготовка данных для анализа
             sub_df = model.df.iloc[
                 params.entry_index: min(
-                    params.entry_index + 201, len(model.df)
+                    params.entry_index + 500, len(model.df)
                 )
             ].copy()
             sub_df['dateTime'] = pd.to_datetime(sub_df['dateTime'], format='%Y-%m-%d %H-%M-%S')

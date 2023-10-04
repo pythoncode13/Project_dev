@@ -87,7 +87,7 @@ class PositionEvaluator:
             print(
                 f"{self.ticker} Сделка закрыта \033[35mпринудительно\033[0m."
             )
-            return True, "Force Close", (
+            return True, "Force", (
                 closest_index, self.df.loc[closest_index, 'close']
             )
 
