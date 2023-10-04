@@ -33,7 +33,7 @@ def start():
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
-                             debug=True,
+                             debug=False,
                              show_progress_bar=True,
                              telegram=False
                              )

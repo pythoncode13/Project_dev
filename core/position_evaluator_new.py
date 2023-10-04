@@ -91,7 +91,7 @@ class PositionEvaluator:
                 closest_index, self.df.loc[closest_index, 'close']
             )
 
-        return False, None, None
+        return False, 'Open', None
 
     def _is_take_reached(self):
         """Сравнивает какой из индексов (тейк и стоп) меньше."""

@@ -16,7 +16,7 @@ from other_modules.telegram.new_position_to_data import add_position_to_data
 from other_modules.telegram.send_message import TelegramMessage
 from other_modules.telegram.position_monitoring import position_monitoring
 from utils.progress_bar_utils import create_progress_bar
-
+from core.trading.trading_one_exp_model_long import trade_one_exp_model_long
 from core.trading.two_models_2.trading_two_exp_model_long import trade_two_exp_model_long
 
 from core.point_combinations.treand_models.up_trend_model import UpTrendModel

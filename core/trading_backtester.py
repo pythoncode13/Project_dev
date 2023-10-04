@@ -7,7 +7,7 @@ from core.candle_plot import CandleStickPlotter
 from core.position_evaluator_new import PositionEvaluator
 import matplotlib.pyplot as plt
 from core.model_utilities.point import Point
-
+from core.model_utilities.calculator import Calculate
 # Named tuple для удобства хранения параметров торговли
 TradeParameters = namedtuple(
     'TradeParameters',
@@ -22,13 +22,6 @@ class StrategySimulator:
         self.stop_mode = stop_mode
         self.position_type = position_type
 
-    # Обобщенный расчет процента
-    @staticmethod
-    def calc_diff(price1, price2, entry_price):
-        price_diff = price2 - price1
-        return price_diff / entry_price * 100
-
-
     def trade_result(self, params, close_point, close_reason, first_take):
         """
         Расчет результатов торговли.
@@ -42,19 +35,15 @@ class StrategySimulator:
             return None, None, None, None
 
         if close_reason == 'Stop' or close_reason == 'Force':
-            # Определяем переменную с ценой закрытия сделки
-            close_position_price = close_point[1]
             # Считаем изменение цены в % между ценой входа
             # и закрытия сделки
-            price_diff = close_position_price - params.entry_price
-            diff = (
-                price_diff / params.entry_price * 100
-                if self.position_type == 'long'
-                else -price_diff / params.entry_price * 100
-            )
-
+            if self.position_type == 'long':
+                diff = Calculate.percentage_change(params.entry_price, close_point[1])
+            else:
+                diff = Calculate.percentage_change_short(params.entry_price,
+                                                        close_point[1])
             return (
-                close_position_price,
+                close_point[1],
                 diff,
                 int(diff > 0),  # profit_or_lose
                 close_point[0] - params.entry_index  # длительность сделки
@@ -63,29 +52,24 @@ class StrategySimulator:
             # Считаем изменение цены в % между ценой входа
             # и частичным закрытием по первому тейку
 
-            price_diff_first_take = (first_take[1] - params.entry_price)
+            if self.position_type == 'long':
+                diff_first_take = Calculate.percentage_change(params.entry_price, first_take[1])
+            else:
+                diff_first_take = Calculate.percentage_change_short(params.entry_price,
+                                                        first_take[1])
 
-            diff_first_take = (
-                                  price_diff_first_take / params.entry_price * 100
-                                  if self.position_type == 'long'
-                                  else -price_diff_first_take / params.entry_price * 100
-                              )
-
-            # Определяем переменную с ценой закрытия сделки
-            close_position_price = close_point[1]
             # Считаем изменение цены в % между ценой входа
             # и закрытия сделки
-            price_diff_close = (close_position_price - params.entry_price)
-
-            diff_close = (
-                             price_diff_close / params.entry_price * 100
-                             if self.position_type == 'long'
-                             else -price_diff_close / params.entry_price * 100
-                         )
+            if self.position_type == 'long':
+                diff_close = Calculate.percentage_change(params.entry_price, close_point[1])
+            else:
+                diff_close = Calculate.percentage_change_short(params.entry_price,
+                                                        close_point[1])
 
             total_profit = diff_first_take * 0.5 + diff_close * 0.5
+
             return (
-                    close_position_price,
+                    close_point[1],
                     total_profit,
                     int(total_profit > 0), #profit_or_lose
                     close_point[0] - params.entry_index # длительность сделки
@@ -105,7 +89,8 @@ class StrategySimulator:
             force_close_minutes=15000,
         ).evaluate()
 
-        if not close_position_step1:
+        if close_reason == 'Open':
+            print(close_position_step1, close_reason, close_point1)
             return 'Open', None, None
 
         if close_position_step1 and close_reason == 'Stop':
@@ -143,23 +128,8 @@ class StrategySimulator:
                 return 'Half', close_point1, close_point2
             if close_position_step2 and close_reason == 'Force':
                 return 'Half_Force', close_point1, close_point2
-
-            # print(
-            #     f"Entry price: {params.entry_price}\n"
-            #     f"Stop price: {params.entry_price}\n"
-            #     f"Take1: {round(close_point1[1], 5)}"
-            # )
-            #
-            # price_diff = close_point1[1] - params.entry_price
-            # diff = (-price_diff / params.entry_price * 100
-            #         ) / 2
-            # print('diff: ', diff)
-            #
-            # price_diff = params.take_price - params.entry_price
-            # diff = (-price_diff / params.entry_price * 100
-            #         ) / 2
-            # print('diff: ', diff)
-            # print(close_position, close_reason, close_point)
+            if close_reason == 'Open':
+                return 'Half', close_point1, close_point1
 
     def trade_process(self, all_base_setup_parameters):
         """
@@ -174,7 +144,11 @@ class StrategySimulator:
         for parameters in all_base_setup_parameters:
             params = TradeParameters(*parameters[0])
             model = parameters[2]
-            model2 = parameters[3]
+
+            if len(parameters) > 3:
+                model2 = parameters[3]
+            else:
+                model2 = model
 
             # Срез и подготовка данных для анализа
             sub_df = model.df.iloc[
@@ -209,13 +183,13 @@ class StrategySimulator:
 
             # Отрисовываем сделку
             # self.plot_trade(close_point, params, model, model2)
-            if close_position_price is not None:
-                if profit_or_lose == 0:
-                    self.plot_trade(close_point, params, model, model2, 'stop')
-
-                else:
-                    self.plot_trade(close_point, params, model, model2,
-                                                 'take')
+            # if close_position_price is not None:
+            #     if profit_or_lose == 0:
+            #         self.plot_trade(close_point, params, model, model2, 'stop')
+            #
+            #     else:
+            #         self.plot_trade(close_point, params, model, model2,
+            #                                      'take')
         return all_other_parameters_up
 
     def plot_trade(self, close_point, params, model, model2, direction):

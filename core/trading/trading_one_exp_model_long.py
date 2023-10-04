@@ -69,7 +69,7 @@ def prepare_trading_setup(activated_models_up, ticker):
         stop_price = t1[1]
 
         take_price = t4[1] + 0.9 * (
-                model.properties.up_take_200 - t4[1])
+                model.properties.take_200 - t4[1])
 
         analysis_base = BaseTradeAnalysis(t1,
                                           t2,
@@ -104,7 +104,7 @@ def trade_one_exp_model_long(models, ticker, timeframe, s_date, u_date):
     # Отбираем из модели для торговли
     setup_parameters = prepare_trading_setup(models, ticker)
     # Торгуем выбранные модели
-    all_other_parameters_up = StrategySimulator(
+    all_other_parameters_up = StrategySimulator('close',
         'long').trade_process(setup_parameters)
     # Сохраняем результаты
     ExcelSaver(
