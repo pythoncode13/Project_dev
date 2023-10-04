@@ -144,11 +144,11 @@ class StrategySimulator:
         for parameters in all_base_setup_parameters:
             params = TradeParameters(*parameters[0])
             model = parameters[2]
-
-            if len(parameters) > 3:
-                model2 = parameters[3]
-            else:
-                model2 = model
+            model2 = parameters[3]
+            # if len(parameters) > 3:
+            #     model2 = parameters[3]
+            # else:
+            #     model2 = model
 
             # Срез и подготовка данных для анализа
             sub_df = model.df.iloc[
@@ -183,13 +183,13 @@ class StrategySimulator:
 
             # Отрисовываем сделку
             # self.plot_trade(close_point, params, model, model2)
-            # if close_position_price is not None:
-            #     if profit_or_lose == 0:
-            #         self.plot_trade(close_point, params, model, model2, 'stop')
-            #
-            #     else:
-            #         self.plot_trade(close_point, params, model, model2,
-            #                                      'take')
+            if close_position_price is not None:
+                if profit_or_lose == 0:
+                    self.plot_trade(close_point, params, model, model2, 'stop')
+
+                else:
+                    self.plot_trade(close_point, params, model, model2,
+                                                 'take')
         return all_other_parameters_up
 
     def plot_trade(self, close_point, params, model, model2, direction):

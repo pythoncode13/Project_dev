@@ -64,7 +64,7 @@ def prepare_trading_setup(super_groups, ticker):
                                                               up.properties.dist_cp_t4_x1,
                                                               up.LT.slope,
                                                               up.LT.intercept,
-                                                              'belove'
+                                                              'below'
                                                               )
         if not up_LT_break_point:
             continue
