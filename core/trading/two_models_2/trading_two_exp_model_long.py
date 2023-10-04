@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from other_modules.timing_decorator import timing_decorator
-from core.point_combinations.treand_models.advanced_model_propetry import AdvancedModelProperty
+from core.point_combinations.treand_models.advanced_model_propetry import \
+    AdvancedModelProperty
 from core.model_utilities.point import Point
 from core.trading_backtester import StrategySimulator
 from utils.excel_saver import ExcelSaver
@@ -59,12 +60,12 @@ def prepare_trading_setup(super_groups, ticker):
         # if not down_LT_break_point:
         #     continue
         up_LT_break_point = Point.find_line_break_point_close(up.df,
-                                                        up.t4[0],
-                                                        up.properties.dist_cp_t4_x1,
-                                                        up.LT.slope,
-                                                        up.LT.intercept,
-                                                        'belive'
-                                                        )
+                                                              up.t4[0],
+                                                              up.properties.dist_cp_t4_x1,
+                                                              up.LT.slope,
+                                                              up.LT.intercept,
+                                                              'belove'
+                                                              )
         if not up_LT_break_point:
             continue
         # LT_intersect = Point.find_intersect_two_line_point(
@@ -124,7 +125,7 @@ def prepare_trading_setup(super_groups, ticker):
                  marker='^', color='r', markersize=10)
 
         take_price = down.t4[1] - 0.9 * (
-                down.t4[1] - down.properties.up_take_200)
+                down.t4[1] - down.properties.take_200)
         # take_price = down.properties.target_3
         # take_price = entry_price + 0.9 * (
         #         down.properties.target_1 - entry_price)
@@ -169,9 +170,10 @@ def prepare_trading_setup(super_groups, ticker):
         advanced_setup_parameters = tuple(map(lambda x: np.round(float(x), 4),
                                               (
 
-        )))
+                                              )))
 
-        all_setup_parameters = (base_setup_parameters, advanced_setup_parameters, up, down)
+        all_setup_parameters = (
+        base_setup_parameters, advanced_setup_parameters, up, down)
         all_base_setup_parameters.append(all_setup_parameters)
 
     return all_base_setup_parameters
@@ -186,14 +188,14 @@ def trade_two_exp_model_long(candidates_up,
                              ):
     # Объединяем две модели
     super_groups = TwoModel(
-                            candidates_up,
-                            candidates_down
-                            ).find_two_model()
+        candidates_up,
+        candidates_down
+    ).find_two_model()
 
     # Отбираем пары моделей для торговли
     setup_parameters = prepare_trading_setup(super_groups, ticker)
     # Торгуем выбранные пары
-    all_other_parameters_up = StrategySimulator(
+    all_other_parameters_up = StrategySimulator('close',
         'short').trade_process(setup_parameters)
     # Сохраняем результаты
     ExcelSaver(

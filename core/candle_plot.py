@@ -118,7 +118,7 @@ class CandleStickPlotter:
         # Тейк
         # Прямая
         self.ax.hlines(
-            y=model.properties.up_take_100,
+            y=model.properties.take_100,
             xmin=xmin,
             xmax=xmax,
             colors='green',
@@ -127,7 +127,7 @@ class CandleStickPlotter:
         )
 
         # Надпись
-        self.ax.text(xmax, model.properties.up_take_100, 'Take Price 1',
+        self.ax.text(xmax, model.properties.take_100, 'Take Price 1',
                      verticalalignment='bottom', horizontalalignment='right',
                      color='black', fontsize=40)
         # Прямая

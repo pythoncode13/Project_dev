@@ -5,7 +5,7 @@ class PositionEvaluator:
             current_datetime,
             take_point_index,
             stop_point_index,
-            force_close_date
+            force_close_date,
     ):
 
         self.ticker = ticker

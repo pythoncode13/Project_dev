@@ -10,15 +10,19 @@ class PositionEvaluator:
             entry_date,
             take_price,
             stop_price,
+            stop_mode,  # Стоп по 'close' или жесткий по уровню
             position_type,  # 'long' or 'short'
             force_close_minutes,
+
     ):
         self.df = df
         self.ticker = ticker
         # Convert dateTime to datetime object if it's in string format
-        self.current_datetime = datetime.now(tz=self.df['dateTime'].dt.tz)  # Matching timezone with dataframe
+        self.current_datetime = datetime.now(
+            tz=self.df['dateTime'].dt.tz)  # Matching timezone with dataframe
         self.take_price = take_price
         self.stop_price = stop_price
+        self.stop_mode = stop_mode
         self.position_type = position_type
         self.force_close_date = self._calculate_force_close_date(
             entry_date,
@@ -40,10 +44,16 @@ class PositionEvaluator:
 
     def _calculate_stop_point_index(self):
         """Ищет индекс свечи, лоу которой достиг стопа."""
-        if self.position_type == "long":
-            index = self.df.loc[self.df['close'] <= self.stop_price].index.min()
-        else:  # short
-            index = self.df.loc[self.df['high'] >= self.stop_price].index.min()
+        if self.stop_mode == 'stop':
+            index = self.df.loc[
+                self.df['close'] <= self.stop_price].index.min()
+        else:
+            if self.position_type == "long":
+                index = self.df.loc[
+                    self.df['low'] <= self.stop_price].index.min()
+            else:  # short
+                index = self.df.loc[
+                    self.df['high'] >= self.stop_price].index.min()
         return None if not isinstance(index, (int, np.integer)) else index
 
     def _calculate_take_point_index(self):
@@ -59,23 +69,24 @@ class PositionEvaluator:
 
         # Если тейк достигнут
         if self.take_reached:
-            # print(f"{self.ticker} Сделка закрыта по \033[32mтейку\033[0m.")
+            print(f"{self.ticker} Сделка закрыта по \033[32mтейку\033[0m.")
             return True, "Take", (self.take_index, self.take_price)
 
         # Если стоп достигнут
         if self.stop_reached:
-            # print(f"{self.ticker} Сделка закрыта по \033[31mстопу\033[0m.")
-            return True, "Stop", (self.stop_index, self.df.loc[self.stop_index, 'close'])
+            print(f"{self.ticker} Сделка закрыта по \033[31mстопу\033[0m.")
+            stop_price_result = self.df.loc[
+                self.stop_index, 'close'] if self.stop_mode == 'stop' else self.stop_price
+            return True, "Stop", (self.stop_index, stop_price_result)
 
         # Если ни стоп ни тейк не были достигнуты
         # и время принудительного закрытия меньше текущего, закрываем сделку.
         if self.force_close_date <= self.current_datetime:
-
             closest_index = self.df.index[-1]
 
-            # print(
-            #     f"{self.ticker} Сделка закрыта \033[35mпринудительно\033[0m."
-            # )
+            print(
+                f"{self.ticker} Сделка закрыта \033[35mпринудительно\033[0m."
+            )
             return True, "Force Close", (
                 closest_index, self.df.loc[closest_index, 'close']
             )

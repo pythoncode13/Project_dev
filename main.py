@@ -22,18 +22,18 @@ def start():
     AppInitializer()
 
     if DEV:
-        # tickers = [
-        #     'AVAXUSDT'
-        # ]
-        tickers = config.tickers
+        tickers = [
+            'OOKIUSDT'
+        ]
+        # tickers = config.tickers
         timeframes = ['30MINUTE']
-
-        s_date = "2023-06-01 00:00:00"
-        u_date = "2023-09-15 00:00:00"
+        # STOP_OOKIUSDT-2023-06-17 14-00-00
+        s_date = "2023-06-10 00:00:00"
+        u_date = "2023-06-20 00:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
-                             debug=False,
+                             debug=True,
                              show_progress_bar=True,
                              telegram=False
                              )

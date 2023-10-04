@@ -47,11 +47,11 @@ class UpModelProperty:
     """Расстояние по оси y"""
 
     @property
-    def up_take_100(self):
+    def take_100(self):
         return self.t4[1] + (self.t4[1] - self.t1[1]) * 1
 
     @property
-    def up_take_200(self):
+    def take_200(self):
         return self.t4[1] + (self.t4[1] - self.t1[1]) * 2
 
     @property
