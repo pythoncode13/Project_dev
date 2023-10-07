@@ -235,40 +235,71 @@ class CandleStickPlotter:
         # Рисуем прямые ЛТ и ЛЦ
         CandleStickPlotter.add_model_line(model.lt)
         CandleStickPlotter.add_model_line(model.lc)
-        """ тесты """
-        # Находим бар, который пробил уровень т4
-        first_bar_below_t4 = Point.find_first_bar_by_price(sub_df_for_plot,
-                                                           model.t4[1],
-                                                           model.t4[0]+1,
-                                                           model.properties.dist_cp_t4_x2,
-                                                           'below'
-                                                           )
-        # self.ax.plot(first_bar_below_t4[0], first_bar_below_t4[1], marker='v', color='k')
-        if first_bar_below_t4:
-            t5 = Point.find_t5(sub_df_for_plot, model.t2, model.t4, first_bar_below_t4[0], direction='down_model')
-            if t5 is not None:
-                self.ax.plot(t5[0], t5[1], marker='^', color='k')
-                lt_hp = Line.calculate(model.t3, t5)
-                if Line.check_line(sub_df_for_plot, lt_hp.slope, lt_hp.intercept, model.t3, t5,
-                                   direction='high'):
-                    # если есть пересечение -
-                    # корректируем линию, добавляя новую точку
-                    t3_1 = Line.correction_LT_down(sub_df_for_plot,
-                                                   model.t3,
-                                                   t5,
-                                                   lt_hp.slope,
-                                                   lt_hp.intercept,
-                                                   return_rightmost=False)
-                    # заново проводим линию ЛТ через т1 и дополнительную точку т3_1
-                    lt_hp = Line.calculate(t3_1, t5)
-                # Проверяем, что две линии не параллельны друг-другу
-                if model.lt.slope != lt_hp.slope:
-                    # Находим и определяем желательный угол между линиями
-                    parallel = Line.cos_sim_down(model.lt.slope, lt_hp.slope)
-                    if parallel <= 90:
-                        CandleStickPlotter.add_model_line(lt_hp)
-
-        """ тесты """
+        # """ тесты """
+        # # Находим бар, который пробил уровень т4
+        # first_bar_below_t4 = Point.find_first_bar_by_price(sub_df_for_plot,
+        #                                                    model.t4[1],
+        #                                                    model.t4[0]+1,
+        #                                                    model.properties.dist_cp_t4_x2,
+        #                                                    'below'
+        #                                                    )
+        # # self.ax.plot(first_bar_below_t4[0], first_bar_below_t4[1], marker='v', color='k')
+        # if first_bar_below_t4:
+        #     t5 = Point.find_t5(sub_df_for_plot, model.t2, model.t4, first_bar_below_t4[0], direction='down_model')
+        #     if t5 is not None:
+        #         self.ax.plot(t5[0], t5[1], marker='^', color='k')
+        #         lt_hp = Line.calculate(model.t3, t5)
+        #         if Line.check_line(sub_df_for_plot, lt_hp.slope, lt_hp.intercept, model.t3, t5,
+        #                            direction='high'):
+        #             # если есть пересечение -
+        #             # корректируем линию, добавляя новую точку
+        #             t3_1 = Line.correction_LT_down(sub_df_for_plot,
+        #                                            model.t3,
+        #                                            t5,
+        #                                            lt_hp.slope,
+        #                                            lt_hp.intercept,
+        #                                            return_rightmost=False)
+        #             # заново проводим линию ЛТ через т1 и дополнительную точку т3_1
+        #             lt_hp = Line.calculate(t3_1, t5)
+        #         # Проверяем, что две линии не параллельны друг-другу
+        #         if model.lt.slope != lt_hp.slope:
+        #             # Находим и определяем желательный угол между линиями
+        #             parallel = Line.cos_sim_down(model.lt.slope, lt_hp.slope)
+        #             if parallel <= 60:
+        #                 CandleStickPlotter.add_model_line(lt_hp)
+        #                 # Находим точку пересечения
+        #                 hp = Point.find_intersect_two_line_point(lt_hp.intercept,
+        #                                                          lt_hp.slope,
+        #                                                          model.lc.intercept,
+        #                                                          model.lc.slope)
+        #                 self.ax.hlines(
+        #                     y=t5[1],
+        #                     xmin=model.t4[0],
+        #                     xmax=model.properties.dist_cp_t4_x2,
+        #                     colors='black',
+        #                     linestyles='solid',
+        #                     linewidth=1,
+        #                 )
+        #
+        #                 self.ax.hlines(
+        #                     y=hp[1],
+        #                     xmin=model.t4[0],
+        #                     xmax=model.properties.dist_cp_t4_x2,
+        #                     colors='black',
+        #                     linestyles='solid',
+        #                     linewidth=1,
+        #                 )
+        #
+        #                 self.ax.hlines(
+        #                     y=model.t4[1],
+        #                     xmin=0,
+        #                     xmax=model.properties.dist_cp_t4_x2,
+        #                     colors='black',
+        #                     linestyles='solid',
+        #                     linewidth=1,
+        #                 )
+        #
+        # """ тесты """
         # Рисуем уровни трейда
         xmin = 0  # начальный индекс дф (если индекс сброшен)
         xmax = len(sub_df_for_plot) - 1  # последний индекс дф

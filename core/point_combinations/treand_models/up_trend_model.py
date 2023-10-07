@@ -50,17 +50,17 @@ class UpTrendModel(TrendModel):
         # if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
         #                    direction='close'):
         #     return None, None
-        if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
+        if Line.check_line(df, LC.slope, LC.intercept, t1, t4,
                            direction='high'):
-            t4_1 = Line.correction_LC_t4up1(df, t2, t4, LC.slope, LC.intercept)
+            t4_1 = Line.correction_LC_t4up1(df, t2, t4)
             t2_1 = Line.correction_LC_t2up1(df, t1, t2, t4_1)
 
             LC = Line.calculate(t2_1, t4_1)
             t2_01 = t2_1
-        #     if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0),
-        #                        t4_1,
-        #                        direction='high'):
-        #         return None, None
+            # if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0),
+            #                    t4_1,
+            #                    direction='high'):
+            #     return None, None
 
         return LC, t2_01
 

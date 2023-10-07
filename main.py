@@ -22,18 +22,25 @@ def start():
     AppInitializer()
 
     if DEV:
-        tickers = [
-            'MCUSDT'
-        ]
-        # tickers = config.tickers
+        # tickers = [
+        #     'BLZUSDT'
+        # ]
+        tickers = config.tickers
         timeframes = ['30MINUTE']
         # STOP_OOKIUSDT-2023-06-17 14-00-00
-        s_date = "2023-07-05 00:00:00"
+        s_date = "2020-01-01 00:00:00"
         u_date = "2023-10-05 00:00:00"
+        # tickers = [
+        #     'PERLUSDT'
+        # ]
+        #
+        # timeframes = ['30MINUTE']
+        # s_date = "2023-09-30 00:00:00"
+        # u_date = "2023-10-03 00:00:00"
 
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
                              images=False,
-                             debug=True,
+                             debug=False,
                              show_progress_bar=True,
                              telegram=False
                              )
@@ -45,8 +52,8 @@ def start():
         s_date = config.s_date
         u_date = config.u_date
         worker = MultyWorker(tickers, timeframes, s_date, u_date,
-                             images=False,
-                             debug=False,
+                             images=True,
+                             debug=True,
                              show_progress_bar=True,
                              telegram=True
                              )

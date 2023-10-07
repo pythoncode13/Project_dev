@@ -120,35 +120,61 @@ class Line:
 
         return (leftmost_index_t3up1, df.loc[leftmost_index_t3up1, 'low'])
 
+    # @staticmethod
+    # def correction_LC_t4up1(df,
+    #                         t2up,
+    #                         t4up,
+    #                         slope,
+    #                         intercept):
+    #     """Коррекция на ЛЦ на участке т2-т4.
+    #     Добавил Decimal."""
+    #     getcontext().prec = 10
+    #     slope = Decimal(slope)
+    #     intercept = Decimal(intercept)
+    #
+    #     leftmost_index_t4up1 = t4up[0]
+    #
+    #     # Получаем все бары между t3up[0]+1 и t4up[0]-1
+    #     high = df.loc[t2up[0] + 1:t4up[0], 'high']
+    #
+    #     # Вычисляем, какие бары пересекают линию
+    #     intersects = high > (slope * high.index.map(Decimal) + intercept)
+    #
+    #     # Если есть пересечения
+    #     if intersects.any():
+    #         # Выбираем индексы пересечений
+    #         intersect_indices = high[intersects].index
+    #         if not intersect_indices.empty:
+    #             # Возвращает выбранный бар, пересекающий линию
+    #             leftmost_index_t4up1 = intersect_indices[np.argmax(high[intersects])]
+    #
+    #     return leftmost_index_t4up1, df.loc[leftmost_index_t4up1, 'high']
+
     @staticmethod
     def correction_LC_t4up1(df,
-                            t2up,
-                            t4up,
-                            slope,
-                            intercept):
-        """Коррекция на ЛЦ на участке т2-т4.
-        Добавил Decimal."""
-        getcontext().prec = 10
-        slope = Decimal(slope)
-        intercept = Decimal(intercept)
+                            t2,
+                            t4
+                            ):
+        # Получаем все бары между t1[0]+1 и t2[0]
+        high = df.loc[t2[0] + 1:t4[0], 'high']
 
-        leftmost_index_t4up1 = t4up[0]
+        # Сортируем индексы по возрастанию "low"
+        sorted_high_indices = high.sort_values().index
 
-        # Получаем все бары между t3up[0]+1 и t4up[0]-1
-        high = df.loc[t2up[0] + 1:t4up[0], 'high']
+        for high_index in sorted_high_indices:
+            # Построим линию через эту точку и t4
+            LC = Line.calculate(t2, (high_index, high[high_index]))
 
-        # Вычисляем, какие бары пересекают линию
-        intersects = high > (slope * high.index.map(Decimal) + intercept)
+            # Вычисляем, какие бары пересекают линию
+            intersects = high > (LC.slope * high.index + LC.intercept)
 
-        # Если есть пересечения
-        if intersects.any():
-            # Выбираем индексы пересечений
-            intersect_indices = high[intersects].index
-            if not intersect_indices.empty:
-                # Возвращает выбранный бар, пересекающий линию
-                leftmost_index_t4up1 = intersect_indices[np.argmax(high[intersects])]
+            # Если нет пересечений, возвращаем эту точку
+            if not intersects.any():
+                return (high_index, high[high_index])
 
-        return leftmost_index_t4up1, df.loc[leftmost_index_t4up1, 'high']
+        # Если не найдено подходящей точки, возвращаем исходную t2
+        return t4
+
 
     @staticmethod
     def correction_LC_t2up1(df, t1up, t2up, t4up):
@@ -332,32 +358,54 @@ class Line:
 
         return (rightmost_index_t3_1, df.loc[rightmost_index_t3_1, 'high'])
 
+    # @staticmethod
+    # def correction_LC_t4_1_down(df, t2, t4, slope, intercept):
+    #     """Коррекция на ЛЦ на участке т2-т4.
+    #     Добавил Decimal."""
+    #     getcontext().prec = 10
+    #     slope = Decimal(slope)
+    #     intercept = Decimal(intercept)
+    #
+    #     leftmost_index_t4_1 = t4[0]
+    #
+    #     # Получаем все бары между t3up[0]+1 и t4[0]-1
+    #     low = df.loc[t2[0] + 1:t4[0], 'high']
+    #
+    #     # Вычисляем, какие бары пересекают линию
+    #     intersects = low < (slope * low.index.map(Decimal) + intercept)
+    #
+    #     # Если есть пересечения
+    #     if intersects.any():
+    #         # Выбираем индексы пересечений
+    #         intersect_indices = low[intersects].index
+    #         if not intersect_indices.empty:
+    #             # Возвращает выбранный бар, пересекающий линию
+    #             leftmost_index_t4_1 = intersect_indices[
+    #                 np.argmax(low[intersects])]
+    #
+    #     return leftmost_index_t4_1, df.loc[leftmost_index_t4_1, 'low']
+
     @staticmethod
-    def correction_LC_t4_1_down(df, t2, t4, slope, intercept):
-        """Коррекция на ЛЦ на участке т2-т4.
-        Добавил Decimal."""
-        getcontext().prec = 10
-        slope = Decimal(slope)
-        intercept = Decimal(intercept)
+    def correction_LC_t4_1_down(df, t2, t4):
+        # Получаем все бары между t1[0]+1 и t2[0]
+        low = df.loc[t2[0] + 1:t4[0], 'low']
 
-        leftmost_index_t4_1 = t4[0]
+        # Сортируем индексы по возрастанию "low"
+        sorted_low_indices = low.sort_values().index
 
-        # Получаем все бары между t3up[0]+1 и t4[0]-1
-        low = df.loc[t2[0] + 1:t4[0], 'high']
+        for low_index in sorted_low_indices:
+            # Построим линию через эту точку и t4
+            LC = Line.calculate(t2, (low_index, low[low_index]))
 
-        # Вычисляем, какие бары пересекают линию
-        intersects = low < (slope * low.index.map(Decimal) + intercept)
+            # Вычисляем, какие бары пересекают линию
+            intersects = low < (LC.slope * low.index + LC.intercept)
 
-        # Если есть пересечения
-        if intersects.any():
-            # Выбираем индексы пересечений
-            intersect_indices = low[intersects].index
-            if not intersect_indices.empty:
-                # Возвращает выбранный бар, пересекающий линию
-                leftmost_index_t4_1 = intersect_indices[
-                    np.argmax(low[intersects])]
+            # Если нет пересечений, возвращаем эту точку
+            if not intersects.any():
+                return (low_index, low[low_index])
 
-        return leftmost_index_t4_1, df.loc[leftmost_index_t4_1, 'low']
+        # Если не найдено подходящей точки, возвращаем исходную t2
+        return t4
 
     @staticmethod
     def correction_LC_t2_1_down(df, t1, t2, t4):

@@ -47,11 +47,20 @@ class DownTrendModel(TrendModel):
         # проводим линию ЛЦ
         LC = Line.calculate(t2, t4)
 
+        # if (t2[0] - t1[0]) <= 2:
+        #     start_index = t1[0]
+        # else:
+        #     start_index = t1[0] + 1
+
         # валидация
-        if Line.check_line(df, LC.slope, LC.intercept, (t1[0] + 1, 0), t4,
+        if Line.check_line(df, LC.slope, LC.intercept, t1, t4,
                            direction='low'):
-            t4_1 = Line.correction_LC_t4_1_down(df, t2, t4, LC.slope, LC.intercept)
+            # t4_1 = Line.correction_LC_t4_1_down(df, t2, t4, LC.slope, LC.intercept)
+            # print(t4_1)
+            t4_1 = Line.correction_LC_t4_1_down(df, t2, t4)
             t2_1 = Line.correction_LC_t2_1_down(df, t1, t2, t4_1)
+            # t4_1 = Line.correction_LC_t4_1_down(df, t2_1, t4, LC.slope,
+            #                                     LC.intercept)
 
             LC = Line.calculate(t2_1, t4_1)
             # plt.plot(LC.points[0], LC.points[1], ':',
@@ -103,7 +112,8 @@ class DownTrendModel(TrendModel):
             # Выбираем МР по расположению СТ
             if CP[0] >= t4[0]:
                 continue
-
+            # if (t1[0] - int(CP[0])) >= (t3[0] - t1[0]) * 3:
+            #     continue
             down_model_candidates.append(
                 DownExpModel(self.df, t1, t2, t3, t4, CP, LT, LC)
             )

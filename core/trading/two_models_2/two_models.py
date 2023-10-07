@@ -34,11 +34,14 @@ class TwoModel:
         TwoModel.plot_points(ax, model.t3, 't3', colors['t3'])
         TwoModel.plot_points(ax, model.t4, 't4', colors['t4'])
 
-        lc_line = Line.calculate_1(model.CP, model.t4, 0)
-        lt_line = Line.calculate_1(model.CP, model.t3, 0)
+        # lc_line = Line.calculate_1(model.CP, model.t4, 0)
+        # lt_line = Line.calculate_1(model.CP, model.t3, 0)
 
-        TwoModel.plot_line(ax, lc_line, ':', 'purple', 0.9)
-        TwoModel.plot_line(ax, lt_line, ':', 'purple', 0.9)
+        # TwoModel.plot_line(ax, lc_line, ':', 'purple', 0.9)
+        # TwoModel.plot_line(ax, lt_line, ':', 'purple', 0.9)
+
+        TwoModel.plot_line(ax, model.LC, ':', 'purple', 0.9)
+        TwoModel.plot_line(ax, model.LT, ':', 'purple', 0.9)
 
     def find_two_model(self):
         up_models = self.up_model
@@ -110,6 +113,8 @@ class TwoModel:
                     #     if down.t1[1] != max(high_values):
                     #         continue
 
+                plt.text(down.t2[0],  down.df.loc[down.t2[0], 'high'], int(down.t2[0]),
+                         fontsize=10)
                 TwoModel.plot_model(up, colors_up)
                 TwoModel.plot_model(down, colors_down)
                 super_groups.append(TwoModel(up, down))

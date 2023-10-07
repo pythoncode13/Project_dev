@@ -81,7 +81,15 @@ def prepare_trading_setup(super_groups, ticker):
                  marker='o', color='r', markersize=10)
         #
         """------------- часть про активацию модели ------------"""
-
+        # down_LT_break_point = Point.find_LT_break_point(down.df,
+        #                                                       down.t4,
+        #                                                       down.properties.dist_cp_t4_x1,
+        #                                                       down.LT.slope,
+        #                                                       down.LT.intercept,
+        #                                                       'down_model'
+        #                                                       )
+        # if not down_LT_break_point:
+        #     continue
         # Находим нижний край тела каждой свечи
         lower_body_edge = up.df['close']
 
@@ -119,6 +127,7 @@ def prepare_trading_setup(super_groups, ticker):
         entry_date = sliced_df.loc[entry_index, 'dateTime']
 
         entry_price = sliced_df.loc[entry_index, 'close']
+        # entry_price = down.t4[1]
 
         stop_price = up.t4[1]
         plt.plot(entry_index, entry_price,
@@ -148,7 +157,8 @@ def prepare_trading_setup(super_groups, ticker):
         stop_percent_difference = 100 - stop_price * 100 / entry_price
 
         take_percent_difference = (take_price * 100 / entry_price - 100) * -1
-        take_percent_difference1 = (down.properties.take_100 * 100 / entry_price - 100) * -1
+        take_percent_difference1 = (
+                                               down.properties.take_100 * 100 / entry_price - 100) * -1
         # plt.hlines(
         #     y=down.properties.take_100,
         #     xmin=down.t1[0],
@@ -163,7 +173,8 @@ def prepare_trading_setup(super_groups, ticker):
         #     continue
         # if take_percent_difference/stop_percent_difference > 1.4:
         #     continue
-
+        strong_t1_cp = (down.t1[0] - int(down.CP[0]))
+        strong_t3_t1 = (down.t3[0] - down.t1[0]) * 3
         base_setup_parameters = (
             entry_date,
             ticker,
@@ -177,11 +188,12 @@ def prepare_trading_setup(super_groups, ticker):
 
         advanced_setup_parameters = tuple(map(lambda x: np.round(float(x), 4),
                                               (
-
+                                                  strong_t1_cp,
+                                                  strong_t3_t1
                                               )))
 
         all_setup_parameters = (
-        base_setup_parameters, advanced_setup_parameters, up, down)
+            base_setup_parameters, advanced_setup_parameters, up, down)
         all_base_setup_parameters.append(all_setup_parameters)
 
     return all_base_setup_parameters
@@ -204,7 +216,8 @@ def trade_two_exp_model_long(candidates_up,
     setup_parameters = prepare_trading_setup(super_groups, ticker)
     # Торгуем выбранные пары
     all_other_parameters_up = StrategySimulator('close',
-        'short').trade_process(setup_parameters)
+                                                'short').trade_process(
+        setup_parameters)
     # Сохраняем результаты
     ExcelSaver(
         ticker,
